@@ -19,7 +19,46 @@ d3.layout.wordStream = function(){
     cw = 1 << 11,
     ch = 1 << 11;
     wordStream.boxes = function(){
-        //#region sacle for the font size.
+        var boxes = buildBoxes(data);
+        //Can remove data since we've got the boxes.
+        delete data;
+        //Get the sprite for each word
+        getImageData(boxes);
+        //#endregion boxes information
+        //Place
+        var board = buildBoard(boxes);
+        for(var bc = 0; bc < boxes.length; bc++){
+            var box = boxes[bc];
+            var words = box.words;
+            var n = words.length;
+            board.boxWidth = box.width;
+            board.boxHeight = box.height;
+            board.boxX = box.x;
+            board.boxY = box.y;
+            for(var i = 0; i < n; i++){
+                place(words[i], board);
+            }
+        }
+        
+        //return board;
+        delete board.sprite;
+        return boxes;
+    };
+    
+    //#region helper functions
+    //Convert from data to box
+    function buildBoxes(data){
+        var start = new Date().getTime();
+        //Combine terms from each topic
+        d3.map(data, function(row){
+            var words = [];
+            d3.keys(row.words).map(function(topic){
+                words = words.concat(row.words[topic]);
+            });
+            row.words = words;
+        });
+        
+        //#region scale for the font size.
         var maxFrequency = 0;
         var minFrequency = Number.MAX_SAFE_INTEGER;
         d3.map(data, function(d){
@@ -45,42 +84,20 @@ d3.layout.wordStream = function(){
         d3.map(data, function(d, i){
             boxes.push({
                 width: boxWidth, 
-                height: frequencyScale(totalFrequencies[i]),
+                height: ~~frequencyScale(totalFrequencies[i]),
                 x: boxWidth * i,
                 y: (size[1] - frequencyScale(totalFrequencies[i]))/2,
                 words: d.words
             });
         });
-        
-        //Get the sprite for each word
-        getImageData(boxes);
-        //#endregion boxes information
-        //Place
-        var board = buildBoard(boxes);
-        for(var bc = 0; bc < boxes.length; bc++){
-            var box = boxes[bc];
-            var words = box.words;
-            var n = words.length;
-            board.boxWidth = box.width;
-            board.boxHeight = box.height;
-            board.boxX = box.x;
-            board.boxY = box.y;
-            for(var i = 0; i < n; i++){
-                place(words[i], board);
-            }
-        }
-        //return board;
-        delete board.sprite;
         return boxes;
-    };
-    
-    //#region helper functions
+    }
     function place(word, board){
         var bw = board.width,
             bh = board.height,
             maxDelta = ~~Math.sqrt((board.boxWidth*board.boxWidth) + (board.boxHeight*board.boxHeight)),
-            startX =  board.boxX + (board.boxWidth*( Math.random() + .5) >> 1),
-            startY =  board.boxY + (board.boxHeight*( Math.random() + .5) >> 1),
+            startX =  ~~(board.boxX + (board.boxWidth*( Math.random() + .5) >> 1)),
+            startY =  ~~(board.boxY + (board.boxHeight*( Math.random() + .5) >> 1)),
             s = spiral([board.boxWidth, board.boxHeight]), 
             dt = Math.random() < .5 ? 1 : -1,
             t = -dt,
@@ -88,6 +105,7 @@ d3.layout.wordStream = function(){
         word.x = startX;
         word.y = startY;
         word.placed = false;
+        var counter = 0;
         while (dxdy = s(t += dt)) {
             dx = ~~dxdy[0];
             dy = ~~dxdy[1];
@@ -100,9 +118,9 @@ d3.layout.wordStream = function(){
 
             if (word.x + word.x0 < 0 || word.y + word.y0 < 0 || word.x + word.x1 > size[0] || word.y + word.y1 > size[1])
                 continue;
-                
             if(!cloudCollide(word, board)){
                 placeWordToBoard(word, board);
+                counter++
                 word.placed = true;
                 delete word.sprite;
                 break;
@@ -270,7 +288,7 @@ d3.layout.wordStream = function(){
                 d = words[di];
 
                 c.save();
-                d.fontSize = fontScale(d.frequency);
+                d.fontSize = ~~fontScale(d.frequency);
                 d.rotate = (~~(Math.random() * 6) - 3) * 30;
                 c.font = ~~(d.fontSize + 1) + "px " + font;
                 
@@ -380,6 +398,7 @@ d3.layout.wordStream = function(){
     wordStream.buildCanvas = buildCanvas;
     wordStream.buildBoard = buildBoard;
     wordStream.placeWordToBoard = placeWordToBoard;
+    wordStream.buildBoxes = buildBoxes;
     //#endregion
     //Exporting the functions to set configuration data
     //#region setter/getter functions

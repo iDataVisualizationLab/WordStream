@@ -10,45 +10,63 @@
 <body>
     <script>
         var url = "./emptywheel.csv";
+        var topics = [];
         d3.csv(url, function(error, rawData) {
-          if (error) throw error;
-          var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
-          var outputFormat = d3.time.format('%b %Y');
-          var data = {};
-          d3.map(rawData, function(d, i){
-              var date = inputFormat.parse(d.time);
-              var key = outputFormat(date);
-              data[key] += data[key] ? ('|' +d.text): (d.text);
-          });
-          var data = d3.keys(data).map(function(d, i){
-              var raw = data[d].split('|');
-              //Count word frequencies
-              var counts = raw.reduce(function(obj, word){
-                if(!obj[word]){
-                    obj[word] = 0;
+            if (error) throw error;
+            var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
+            var outputFormat = d3.time.format('%b %Y');
+            topics = d3.keys(rawData[0]).slice(2, 6);
+            //Filter and take only dates in 2013
+            rawData = rawData.filter(function(d){
+                var time = inputFormat.parse(d.time);
+                var starDate =  inputFormat.parse('2013-01-01T00:00:00');
+                var endDate = inputFormat.parse('2014-01-01T00:00:00');
+                return      time  >= starDate && time < endDate; 
+            });
+            var data = {};
+            d3.map(rawData, function(d, i){
+                var date = inputFormat.parse(d.time);
+                var date = outputFormat(date);
+                topics.forEach(topic => {
+                    if(!data[date]) data[date] = {};
+                    data[date][topic] += data[date][topic] ? ('|' +d[topic]): (d[topic]); 
+                });
+            });
+            var data = d3.keys(data).map(function(date, i){
+                var words = {};
+                topics.forEach(topic => {
+                    var raw = {};
+                    raw[topic] = data[date][topic].split('|');
+                    //Count word frequencies
+                    var counts = raw[topic].reduce(function(obj, word){
+                        if(!obj[word]){
+                            obj[word] = 0;
+                        }
+                        obj[word]++;
+                        return obj;
+                    }, {});
+                    //Convert to array of objects
+                    words[topic] = d3.keys(counts).map(function(d){
+                        return{
+                            text: d,
+                            frequency: counts[d],
+                            topic: topic
+                        }
+                    }).sort(function(a, b){//sort the terms by frequency
+                        return b.frequency-a.frequency;
+                    }).filter(function(d){return d.text; })//filter out empty words
+                    .slice(0, 15);
+                });
+                return {
+                    date: date,
+                    words: words
                 }
-                obj[word]++;
-                return obj;
-              }, {});
-              //Convert to array of objects
-              var words = d3.keys(counts).map(function(d){
-                  return{
-                      text: d,
-                      frequency: counts[d]
-                  }
-              }).sort(function(a, b){//sort the terms by frequency
-                  return b.frequency-a.frequency;
-              }).filter(function(d){return d.text; })//filter out empty words
-              .slice(0, 40);
-              return {
-                  date: d,
-                  words: words
-              }
-          }).sort(function(a, b){//sort by date
-              return outputFormat.parse(a.date) - outputFormat.parse(b.date);
-          });
-          draw(data);
+            }).sort(function(a, b){//sort by date
+                return outputFormat.parse(a.date) - outputFormat.parse(b.date);
+            });
+            draw(data);
         });
+
         function draw(data){
             var width = 1200, height = 500;
             var ws = d3.layout.wordStream()
@@ -73,6 +91,10 @@
             //Try time stamp for the 12 boxes
             var colors = ['black', 'red', 'green', 'aqua', 'aquamarine', 'yellow', 'steelblue', 'bisque', 'gray', 'blue', 'blueviolet', 'brown'];
             var timeColorMap = d3.scale.ordinal().domain(d3.range(0, 12)).range(colors);
+            
+            var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
+
+
             var streamGroups = svg.selectAll('g').data(boxes).enter().append('g').style({
                 fill: function(d, i){return timeColorMap(i);}
             });
@@ -85,7 +107,7 @@
             .attr({
                 'font-family': 'Impact',
                 'font-size': function(d){return d.fontSize;},
-                fill: function(d){return termColorMap(d.text);},
+                fill: function(d){return topicColorMap(d.topic);},
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle'
             });
