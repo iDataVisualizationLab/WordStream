@@ -9,7 +9,7 @@
 </head>
 <body>
     <script>
-        var url = "data/emptywheel.csv";
+        var url = "./emptywheel.csv";
         var topics = [];
         d3.csv(url, function(error, rawData) {
             if (error) throw error;
@@ -45,7 +45,6 @@
                         obj[word]++;
                         return obj;
                     }, {});
-                    debugger;
                     //Convert to array of objects
                     words[topic] = d3.keys(counts).map(function(d){
                         return{

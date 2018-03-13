@@ -11,19 +11,19 @@
 <body>
     <script>
         var url = "../data/emptywheel.csv";
+        var topics = [];
         d3.csv(url, function(error, rawData) {
             if (error) throw error;
             var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
             var outputFormat = d3.time.format('%b %Y');
-            var topics = d3.keys(rawData[0]).slice(2, 6);
+            topics = d3.keys(rawData[0]).slice(2, 6);
             //Filter and take only dates in 2013
             rawData = rawData.filter(function(d){
                 var time = inputFormat.parse(d.time);
                 var starDate =  inputFormat.parse('2013-01-01T00:00:00');
                 var endDate = inputFormat.parse('2014-01-01T00:00:00');
-                return time  >= starDate && time < endDate; 
+                return      time  >= starDate && time < endDate; 
             });
-            
             var data = {};
             d3.map(rawData, function(d, i){
                 var date = inputFormat.parse(d.time);
@@ -72,6 +72,8 @@
             .data(data);
             
             var board = ws.boxes();
+            board.x = 0;
+            board.y = 0;
             
             var cw = 1 << 11,
             ch = 1 << 11;

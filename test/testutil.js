@@ -28,3 +28,32 @@ function buildSprite(width, height){
     }
     return sprite;
 }
+function getDummyData(){
+    var data = [
+        {
+            date: 'Jan 2010',
+            words:
+            {
+                    location: [{text: "one", frequency: 1}, {text: "one", frequency: 2}],
+                    person: [{text: "Three", frequency: 3}, {text: "Four", frequency: 1}]
+            }
+        },
+        {
+            date: 'Feb 2010',
+            words: 
+            {
+                location: [{text: "Five", frequency: 5}, {text: "one", frequency: 2}],
+                person: [{text: "Three", frequency: 3}, {text: "Four", frequency: 6}]
+            }
+        },
+        {
+            date: 'Mar 2010',
+            words: 
+            {
+                location: [{text: "Five", frequency: 1}, {text: "one", frequency: 1}],
+                person: [{text: "Three", frequency: 1}, {text: "Four", frequency: 1}]
+            }
+        }
+    ];
+    return data;
+}

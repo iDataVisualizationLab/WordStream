@@ -56,7 +56,7 @@
                     }).sort(function(a, b){//sort the terms by frequency
                         return b.frequency-a.frequency;
                     }).filter(function(d){return d.text; })//filter out empty words
-                    .slice(0, 20);
+                    .slice(0, 15);
                 });
                 return {
                     date: date,
@@ -69,75 +69,24 @@
         });
 
         function draw(data){
-            var width = 1200, height = 500;
+            var width = 1200, height = 600;
             var ws = d3.layout.wordStream()
             .size([width, height])
             .data(data);
-            var boxes = ws.boxes();
-
-            //Displaying the streams
-            var area = d3.svg.area()
-            .interpolate('cardinal')
-            .x(function(d){return (d.x);})
-            .y0(function(d){return d.y0;})
-            .y1(function(d){return (d.y0 + d.y); });
-
-            var color = d3.scale.category10();
-            var svg = d3.select("body").append('svg').attr({
-                width: width,
-                height: height
-            });
             
-            svg.selectAll('path')
-                .data(boxes.layers)
-                .enter()
-                .append('path')
-                .attr('d', area)
-                .style('fill', function () {
-                    return color(Math.random());
-                })
-                .attr({
-                    'opacity': 0.2,
-                    stroke: 'steelblue'
-                }); 
-            //For each box
-            var allWords = [];
-            d3.map(boxes.data, function(row){
-                boxes.topics.forEach(topic=>{
-                    allWords = allWords.concat(row.words[topic]);
-                });
-            });
-            allWords = allWords.filter(d=> d.placed==true);
-            
-            //Display text
-            var topics = boxes.topics;
-            var c20 = d3.scale.category20b();
-            //Color based on the topic
-            var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
-            //Color based on term
-            var terms = [];
-            for(i=0; i< allWords.length; i++){
-                terms.concat(allWords[i].text);
-            }
-            var uniqueTerms = d3.set(terms).values();
-            var termColorMap = d3.scale.ordinal()
-                .domain(uniqueTerms)
-                .range(c20.range());
-
-            svg.selectAll('g').data(allWords).enter().append('g')
-            .attr({
-                transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}
-            }).append('text')
-            .text(function(d){return d.text;})
-            .attr({
-                'font-family': 'Impact',
-                'font-size': function(d){return d.fontSize;},
-                //fill: function(d){return topicColorMap(d.topic);},
-                //fill: function(d, i){return color(i);},
-                fill: function(d, i){return termColorMap(d.text);},
-                'text-anchor': 'middle',
-                'alignment-baseline': 'middle'
-            });
+            ws.buildFontScale(data);
+            var boxes = ws.buildBoxes(data);
+            //Get the sprite for each word
+            var imageData = ws.getImageData(boxes);
+                
+            var cw = 1 << 11,
+            ch = 1 << 11;
+            var canvas = d3.select('body').append("canvas").attr({
+                width: cw,
+                height: ch,
+            }).style('border', '1px solid black');
+            var c = canvas[0][0].getContext("2d");
+            c.putImageData(imageData, 0, 0);
         };
     </script>
 </body>
