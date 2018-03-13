@@ -68,46 +68,64 @@
         });
 
         function draw(data){
-            var width = 800, height = 800;
+            var width = 1200, height = 600;
+            var interpolation = "cardinal";
+            var margins = {left: 10, top: 20, right: 10, bottom: 30};
             var ws = d3.layout.wordStream()
             .size([width, height])
+            .interpolate(interpolation)
             .data(data);
             var boxes = ws.boxes();
-
+            
             //Displaying the streams
             var area = d3.svg.area()
-            .interpolate('cardinal')
+            .interpolate(interpolation)
             .x(function(d){return (d.x);})
             .y0(function(d){return d.y0;})
             .y1(function(d){return (d.y0 + d.y); });
-
             var color = d3.scale.category10();
             var svg = d3.select("body").append('svg').attr({
-                width: width,
-                height: height
+                width: width + margins.left + margins.top,
+                height: height + margins.top + margins.bottom,
             });
-            
-            svg.selectAll('path')
+            //Display time axes
+            var dates = [];
+            boxes.data.forEach(row =>{
+                dates.push(row.date);
+            });
+            var yAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
+            var yAxis = d3.svg.axis().orient('bottom').scale(yAxisScale);
+            var axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height+margins.top) + ')');
+            var axisNodes = axisGroup.call(yAxis);
+            styleAxis(axisNodes);
+            //Display the vertical gridline
+            var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length+1)).rangeBands([0, width+width/boxes.data.length]);
+            var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
+            var xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top) + ')');
+            var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height, 0, 0).tickFormat(''));
+            styleGridlineNodes(gridlineNodes);
+            //Main group
+            var mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
+            mainGroup.selectAll('path')
                 .data(boxes.layers)
                 .enter()
                 .append('path')
                 .attr('d', area)
-                .style('fill', function () {
-                    return color(Math.random());
+                .style('fill', function (d, i) {
+                    return color(i);
                 })
                 .attr({
                     'fill-opacity': 0.1,
                     stroke: 'black',
                     'stroke-width': 0.3
                 }); 
-            //For each box
             var allWords = [];
             d3.map(boxes.data, function(row){
                 boxes.topics.forEach(topic=>{
                     allWords = allWords.concat(row.words[topic]);
                 });
             });
-            allWords = allWords.filter(d=> d.placed==true);
+            allWords = allWords.filter(d=> d.placed==true);//Filter out not placable words
             
             //Display text
             var topics = boxes.topics;
@@ -124,7 +142,7 @@
                 .domain(uniqueTerms)
                 .range(c20.range());
 
-            svg.selectAll('g').data(allWords).enter().append('g')
+            mainGroup.selectAll('g').data(allWords).enter().append('g')
             .attr({
                 transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}
             }).append('text')
@@ -138,7 +156,50 @@
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle'
             });
+            //Display legends
+            var legendFontSize = 12;
+            var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + 5 + ')');
+            var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
+            .attr('transform', function(d, i){return 'translate(' + 10 + ',' + (i*legendFontSize) + ')';});
+            legendNodes.append('circle').attr({
+                x: 0,
+                y: 0,
+                r: 5,
+                fill: function(d, i){return color(i);},
+                'fill-opacity': 0.1,
+                stroke: 'black',
+                'stroke-width': 0.3,
+            });
+            legendNodes.append('text').text(function(d){return d;}).attr({
+                'font-size': legendFontSize,
+                'alignment-baseline': 'middle',
+                dx: 8
+            });
+            
         };
+        function styleAxis(axisNodes){
+            axisNodes.selectAll('.domain').attr({
+                fill: 'none',
+                'stroke-width': 1,
+                stroke: 'black'
+            });
+            axisNodes.selectAll('.tick line').attr({
+                fill: 'none',
+                'stroke-width': 1,
+                stroke: 'black'
+            });
+        }
+        function styleGridlineNodes(gridlineNodes){
+            gridlineNodes.selectAll('.domain').attr({
+                fill: 'none',
+                stroke: 'none'
+            });
+            gridlineNodes.selectAll('.tick line').attr({
+                fill: 'none',
+                'stroke-width': 0.7,
+                stroke: 'lightgray'
+            });
+        }
     </script>
 </body>
 </html>
