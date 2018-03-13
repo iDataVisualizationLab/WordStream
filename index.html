@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WordStream</title>
-    <script src="lib/d3.min.js"></script>
-    <script src="lib/d3.layout.wordstream.js"></script>
+    <script src="./lib/d3.min.js"></script>
+    <script src="./lib/d3.layout.wordstream.js"></script>
 </head>
 <body>
     <script>
-        var url = "data/emptywheel.csv";
+        var url = "./data/emptywheel.csv";
         var topics = [];
         d3.csv(url, function(error, rawData) {
             if (error) throw error;
@@ -45,7 +45,6 @@
                         obj[word]++;
                         return obj;
                     }, {});
-                    debugger;
                     //Convert to array of objects
                     words[topic] = d3.keys(counts).map(function(d){
                         return{
@@ -56,7 +55,7 @@
                     }).sort(function(a, b){//sort the terms by frequency
                         return b.frequency-a.frequency;
                     }).filter(function(d){return d.text; })//filter out empty words
-                    .slice(0, 15);
+                    .slice(0, 20);
                 });
                 return {
                     date: date,
@@ -74,33 +73,57 @@
             .size([width, height])
             .data(data);
             var boxes = ws.boxes();
-            //Make the color scheme
+
+            //Displaying the streams
+            var area = d3.svg.area()
+            .interpolate('cardinal')
+            .x(function(d){return (d.x);})
+            .y0(function(d){return d.y0;})
+            .y1(function(d){return (d.y0 + d.y); });
+
+            var color = d3.scale.category10();
+            var svg = d3.select("body").append('svg').attr({
+                width: width,
+                height: height
+            });
+            
+            svg.selectAll('path')
+                .data(boxes.layers)
+                .enter()
+                .append('path')
+                .attr('d', area)
+                .style('fill', function () {
+                    return color(Math.random());
+                })
+                .attr({
+                    'opacity': 0.2,
+                    stroke: 'steelblue'
+                }); 
+            //For each box
+            var allWords = [];
+            d3.map(boxes.data, function(row){
+                boxes.topics.forEach(topic=>{
+                    allWords = allWords.concat(row.words[topic]);
+                });
+            });
+            allWords = allWords.filter(d=> d.placed==true);
+            
+            //Display text
+            var topics = boxes.topics;
+            var c20 = d3.scale.category20b();
+            //Color based on the topic
+            var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
+            //Color based on term
             var terms = [];
-            for(i=0; i< boxes.length; i++){
-                terms.concat(boxes[i].words);
+            for(i=0; i< allWords.length; i++){
+                terms.concat(allWords[i].text);
             }
-            var c20 = d3.scale.category20();
             var uniqueTerms = d3.set(terms).values();
             var termColorMap = d3.scale.ordinal()
                 .domain(uniqueTerms)
                 .range(c20.range());
 
-            var svg = d3.select('body').append('svg').attr({
-                width: width,
-                height: height
-            });
-            //Try time stamp for the 12 boxes
-            var colors = ['black', 'red', 'green', 'aqua', 'aquamarine', 'yellow', 'steelblue', 'bisque', 'gray', 'blue', 'blueviolet', 'brown'];
-            var timeColorMap = d3.scale.ordinal().domain(d3.range(0, 12)).range(colors);
-            
-            var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
-
-
-            var streamGroups = svg.selectAll('g').data(boxes).enter().append('g').style({
-                fill: function(d, i){return timeColorMap(i);}
-            });
-            //Display text
-            streamGroups.selectAll('g').data(function(d){return d.words.filter(a=>a.placed);}).enter().append('g')
+            svg.selectAll('g').data(allWords).enter().append('g')
             .attr({
                 transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}
             }).append('text')
@@ -108,41 +131,13 @@
             .attr({
                 'font-family': 'Impact',
                 'font-size': function(d){return d.fontSize;},
-                fill: function(d){return topicColorMap(d.topic);},
+                //fill: function(d){return topicColorMap(d.topic);},
+                //fill: function(d, i){return color(i);},
+                fill: function(d, i){return termColorMap(d.text);},
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle'
             });
-            //#region  Display stream
-            var graphGroup = svg.append('g');
-            var streamPath1 = ws.streamPath1();
-            var streamPath2 = ws.streamPath2();
-            var area1 = d3.svg.area()
-            .interpolate('cardinal')
-            .x(function(d){return d[0]; })
-            .y0(0)
-            .y1(function(d){return d[1]; });
-            var area2 = d3.svg.area()
-            .interpolate('cardinal')
-            .x(function(d){return d[0]; })
-            .y0(function(d){return d[1]; })
-            .y1(height);
-            graphGroup.append('path').datum(streamPath1)
-            .attr({
-                d: area1,
-                stroke: 'red',
-                'stroke-width': 2,
-                fill :'red'
-            });
-            graphGroup.append('path').datum(streamPath2)
-            .attr({
-                d: area2,
-                stroke: 'red',
-                'stroke-width': 2,
-                fill :'red'
-            });
-            //#endregion display stream
         };
-
     </script>
 </body>
 </html>
