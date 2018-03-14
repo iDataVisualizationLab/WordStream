@@ -6,6 +6,7 @@
     <title>WordStream</title>
     <script src="./lib/d3.min.js"></script>
     <script src="./lib/d3.layout.wordstream.js"></script>
+    <script src="./test/testutil.js"></script>
 </head>
 <body>
     <script>
@@ -55,7 +56,7 @@
                     }).sort(function(a, b){//sort the terms by frequency
                         return b.frequency-a.frequency;
                     }).filter(function(d){return d.text; })//filter out empty words
-                    .slice(0, 30);
+                    .slice(0, 20);
                 });
                 return {
                     date: date,
@@ -66,18 +67,23 @@
             });
             draw(data);
         });
-
+        // var data = getDummyData();
+        // draw(data);
         function draw(data){
-            var width = 1200, height = 600;
+            //Layout data
+            var width = 1200, height = 400;
             var interpolation = "cardinal";
-            var margins = {left: 10, top: 20, right: 10, bottom: 30};
+            var axisPadding = 10;
+            var margins = {left: 20, top: 20, right: 10, bottom: 30};
             var ws = d3.layout.wordStream()
             .size([width, height])
             .interpolate(interpolation)
             .data(data);
             var boxes = ws.boxes();
             
-            //Displaying the streams
+            //Display data
+            var legendFontSize = 12;
+            var legendHeight = boxes.topics.length*legendFontSize;
             var area = d3.svg.area()
             .interpolate(interpolation)
             .x(function(d){return (d.x);})
@@ -86,23 +92,24 @@
             var color = d3.scale.category10();
             var svg = d3.select("body").append('svg').attr({
                 width: width + margins.left + margins.top,
-                height: height + margins.top + margins.bottom,
+                height: height + margins.top + margins.bottom + axisPadding + legendHeight,
             });
             //Display time axes
             var dates = [];
             boxes.data.forEach(row =>{
                 dates.push(row.date);
             });
-            var yAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
-            var yAxis = d3.svg.axis().orient('bottom').scale(yAxisScale);
-            var axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height+margins.top) + ')');
-            var axisNodes = axisGroup.call(yAxis);
+            
+            var xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
+            var xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
+            var axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height+margins.top+axisPadding+legendHeight) + ')');
+            var axisNodes = axisGroup.call(xAxis);
             styleAxis(axisNodes);
             //Display the vertical gridline
             var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length+1)).rangeBands([0, width+width/boxes.data.length]);
             var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
-            var xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top) + ')');
-            var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height, 0, 0).tickFormat(''));
+            var xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top + axisPadding+legendHeight) + ')');
+            var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height-axisPadding-legendHeight, 0, 0).tickFormat(''));
             styleGridlineNodes(gridlineNodes);
             //Main group
             var mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
@@ -156,26 +163,22 @@
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle'
             });
-            //Display legends
-            var legendFontSize = 12;
-            var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + 5 + ')');
+            //Build the legends
+            var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top) + ')');
             var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
             .attr('transform', function(d, i){return 'translate(' + 10 + ',' + (i*legendFontSize) + ')';});
             legendNodes.append('circle').attr({
-                x: 0,
-                y: 0,
                 r: 5,
                 fill: function(d, i){return color(i);},
                 'fill-opacity': 0.1,
                 stroke: 'black',
-                'stroke-width': 0.3,
+                'stroke-width': .5,
             });
             legendNodes.append('text').text(function(d){return d;}).attr({
                 'font-size': legendFontSize,
                 'alignment-baseline': 'middle',
                 dx: 8
             });
-            
         };
         function styleAxis(axisNodes){
             axisNodes.selectAll('.domain').attr({
