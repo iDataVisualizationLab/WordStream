@@ -113,6 +113,8 @@
             styleGridlineNodes(gridlineNodes);
             //Main group
             var mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
+            var wordStreamG = mainGroup.append('g');
+
             mainGroup.selectAll('path')
                 .data(boxes.layers)
                 .enter()
@@ -161,8 +163,56 @@
                 //fill: function(d, i){return color(i);},
                 fill: function(d, i){return termColorMap(d.text);},
                 'text-anchor': 'middle',
-                'alignment-baseline': 'middle'
+                'alignment-baseline': 'middle',
+                topic: function(d){return d.topic;}
             });
+            //Try
+            var prevColor;
+            
+            mainGroup.selectAll('text').on('mouseenter', function(){
+                var thisText = d3.select(this);
+                prevColor = thisText.attr('fill');
+                var text = thisText.text();
+                var topic = thisText.attr('topic');
+                var allTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text === text &&  t.topic === topic;
+                });
+                allTexts.attr('fill', 'red');
+                //Push all points
+                var points = [];
+                allTexts[0].forEach(t => {
+                    var data = t.__data__;
+                    var x = data.x;
+                    var y = data.y;
+                    var fontSize = data.fontSize;
+                    points.push({
+                        x: x,
+                        y0: y-(fontSize>>1),
+                        y: fontSize
+                    }); 
+                });
+                //Append stream
+                wordStreamG.append('path')
+                    .datum(points)
+                    .attr('d', area)
+                    .style('fill', prevColor)
+                    .attr({
+                        'fill-opacity': 1,
+                        stroke: 'black',
+                        'stroke-width': 0.3
+                    });
+            });
+            mainGroup.selectAll('text').on('mouseout', function(){
+                var thisText = d3.select(this);
+                var text = thisText.text();
+                var topic = thisText.attr('topic');
+                var allTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text === text &&  t.topic === topic;
+                });
+                allTexts.attr('fill', prevColor);
+                wordStreamG.selectAll('path').remove();
+            });
+            
             //Build the legends
             var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top) + ')');
             var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
