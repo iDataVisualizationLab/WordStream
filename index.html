@@ -108,8 +108,8 @@
             //Display the vertical gridline
             var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length+1)).rangeBands([0, width+width/boxes.data.length]);
             var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
-            var xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top + axisPadding+legendHeight) + ')');
-            var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height-axisPadding-legendHeight, 0, 0).tickFormat(''));
+            var xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top + axisPadding+legendHeight+margins.bottom) + ')');
+            var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height-axisPadding-legendHeight-margins.bottom, 0, 0).tickFormat(''));
             styleGridlineNodes(gridlineNodes);
             //Main group
             var mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
@@ -168,7 +168,7 @@
             });
             //Try
             var prevColor;
-            
+            //Highlight
             mainGroup.selectAll('text').on('mouseenter', function(){
                 var thisText = d3.select(this);
                 prevColor = thisText.attr('fill');
@@ -177,7 +177,38 @@
                 var allTexts = mainGroup.selectAll('text').filter(t =>{
                     return t.text === text &&  t.topic === topic;
                 });
-                allTexts.attr('fill', 'red');
+                allTexts.attr({
+                    stroke: 'red',
+                    'stroke-width': 1
+                });
+            });
+            mainGroup.selectAll('text').on('mouseout', function(){
+                var thisText = d3.select(this);
+                var text = thisText.text();
+                var topic = thisText.attr('topic');
+                var allTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text === text &&  t.topic === topic;
+                });
+                allTexts.attr({
+                    stroke: 'none',
+                    'stroke-width': '0'
+                });
+                wordStreamG.selectAll('path').remove();
+                //Set the other text visibles
+                //Hide all other texts
+                var allOtherTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text != text &&  t.topic === topic;
+                });
+                allOtherTexts.attr('visibility', 'visible');
+            });
+            //Click
+            mainGroup.selectAll('text').on('click', function(){
+                var thisText = d3.select(this);
+                var text = thisText.text();
+                var topic = thisText.attr('topic');
+                var allTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text === text &&  t.topic === topic;
+                });
                 //Push all points
                 var points = [];
                 allTexts[0].forEach(t => {
@@ -199,18 +230,12 @@
                     .attr({
                         'fill-opacity': 1,
                         stroke: 'black',
-                        'stroke-width': 0.3
-                    });
-            });
-            mainGroup.selectAll('text').on('mouseout', function(){
-                var thisText = d3.select(this);
-                var text = thisText.text();
-                var topic = thisText.attr('topic');
-                var allTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text === text &&  t.topic === topic;
+                        'stroke-width': 0.3});
+                //Hide all other texts
+                var allOtherTexts = mainGroup.selectAll('text').filter(t =>{
+                    return t.text != text &&  t.topic === topic;
                 });
-                allTexts.attr('fill', prevColor);
-                wordStreamG.selectAll('path').remove();
+                allOtherTexts.attr('visibility', 'hidden');
             });
             
             //Build the legends
@@ -232,14 +257,10 @@
         };
         function styleAxis(axisNodes){
             axisNodes.selectAll('.domain').attr({
-                fill: 'none',
-                'stroke-width': 1,
-                stroke: 'black'
+                fill: 'none'
             });
             axisNodes.selectAll('.tick line').attr({
                 fill: 'none',
-                'stroke-width': 1,
-                stroke: 'black'
             });
         }
         function styleGridlineNodes(gridlineNodes){
