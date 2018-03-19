@@ -20,8 +20,8 @@
             //Filter and take only dates in 2013
             rawData = rawData.filter(function(d){
                 var time = inputFormat.parse(d.time);
-                var starDate =  inputFormat.parse('2013-01-01T00:00:00');
-                var endDate = inputFormat.parse('2014-01-01T00:00:00');
+                var starDate =  inputFormat.parse('2014-01-01T00:00:00');
+                var endDate = inputFormat.parse('2014-07-01T00:00:00');
                 return      time  >= starDate && time < endDate; 
             });
             var data = {};
@@ -56,7 +56,7 @@
                     }).sort(function(a, b){//sort the terms by frequency
                         return b.frequency-a.frequency;
                     }).filter(function(d){return d.text; })//filter out empty words
-                    .slice(0, 20);
+                    .slice(0, 30);
                 });
                 return {
                     date: date,
@@ -67,11 +67,9 @@
             });
             draw(data);
         });
-        // var data = getDummyData();
-        // draw(data);
         function draw(data){
             //Layout data
-            var width = 1200, height = 500;
+            var width = 720, height = 300;
             var interpolation = "cardinal";
             var axisPadding = 10;
             var margins = {left: 20, top: 20, right: 10, bottom: 30};
@@ -114,7 +112,8 @@
             //Main group
             var mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
             var wordStreamG = mainGroup.append('g');
-
+            
+            var topics = boxes.topics;
             mainGroup.selectAll('path')
                 .data(boxes.layers)
                 .enter()
@@ -126,7 +125,8 @@
                 .attr({
                     'fill-opacity': 0.1,
                     stroke: 'black',
-                    'stroke-width': 0.3
+                    'stroke-width': 0.3,
+                    topic: function(d, i){return topics[i];}
                 }); 
             var allWords = [];
             d3.map(boxes.data, function(row){
@@ -134,10 +134,6 @@
                     allWords = allWords.concat(row.words[topic]);
                 });
             });
-            allWords = allWords.filter(d=> d.placed==true);//Filter out not placable words
-            
-            //Display text
-            var topics = boxes.topics;
             var c20 = d3.scale.category20b();
             //Color based on the topic
             var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
@@ -164,7 +160,8 @@
                 fill: function(d, i){return termColorMap(d.text);},
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle',
-                topic: function(d){return d.topic;}
+                topic: function(d){return d.topic;},
+                visibility: function(d, i){ return d.placed ? "visible": "hidden";}
             });
             //Try
             var prevColor;
@@ -175,7 +172,7 @@
                 var text = thisText.text();
                 var topic = thisText.attr('topic');
                 var allTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text === text &&  t.topic === topic;
+                    return t && t.text === text &&  t.topic === topic;
                 });
                 allTexts.attr({
                     stroke: 'red',
@@ -187,19 +184,12 @@
                 var text = thisText.text();
                 var topic = thisText.attr('topic');
                 var allTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text === text &&  t.topic === topic;
+                    return t && !t.cloned && t.text === text &&  t.topic === topic;
                 });
                 allTexts.attr({
                     stroke: 'none',
                     'stroke-width': '0'
                 });
-                wordStreamG.selectAll('path').remove();
-                //Set the other text visibles
-                //Hide all other texts
-                var allOtherTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text != text &&  t.topic === topic;
-                });
-                allOtherTexts.attr('visibility', 'visible');
             });
             //Click
             mainGroup.selectAll('text').on('click', function(){
@@ -207,20 +197,44 @@
                 var text = thisText.text();
                 var topic = thisText.attr('topic');
                 var allTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text === text &&  t.topic === topic;
+                    return t && t.text === text &&  t.topic === topic;
                 });
+                //Select the data for the stream layers
+                var streamLayer = d3.select("path[topic='"+ topic+"']" )[0][0].__data__;
                 //Push all points
-                var points = [];
+                var points = Array();
+                //Initialize all points
+                streamLayer.forEach(elm => {
+                    points.push({
+                        x: elm.x,
+                        y0: elm.y0+elm.y,
+                        y: 0//zero as default
+                    });
+                });
                 allTexts[0].forEach(t => {
                     var data = t.__data__;
-                    var x = data.x;
-                    var y = data.y;
                     var fontSize = data.fontSize;
-                    points.push({
-                        x: x,
-                        y0: y-(fontSize>>1),
-                        y: fontSize
-                    }); 
+                    //The point
+                    var thePoint = points[data.timeStep+1];;//+1 since we added 1 to the first point and 1 to the last point.
+                    thePoint.y = -data.streamHeight;
+                    //Set it to visible.
+                    //Clone the nodes.
+                    var clonedNode = t.cloneNode(true);
+                    d3.select(clonedNode).attr({
+                        visibility: "visible",
+                        stroke: 'none',
+                        'stroke-size': 0
+                    });
+                    var clonedParentNode = t.parentNode.cloneNode(false);
+                    clonedParentNode.appendChild(clonedNode);
+                    
+                    t.parentNode.parentNode.appendChild(clonedParentNode);
+                    d3.select(clonedParentNode).attr({
+                        cloned: true,
+                        topic: topic
+                    }).transition().duration(300).attr({
+                        transform: function(d, i){return 'translate('+thePoint.x+','+(thePoint.y0+thePoint.y-fontSize/2)+')';},
+                    });
                 });
                 //Append stream
                 wordStreamG.append('path')
@@ -230,12 +244,33 @@
                     .attr({
                         'fill-opacity': 1,
                         stroke: 'black',
-                        'stroke-width': 0.3});
+                        'stroke-width': 0.3,
+                        topic: topic,
+                        wordStream: true
+                    });
                 //Hide all other texts
                 var allOtherTexts = mainGroup.selectAll('text').filter(t =>{
-                    return t.text != text &&  t.topic === topic;
+                    return t && !t.cloned &&  t.topic === topic;
                 });
                 allOtherTexts.attr('visibility', 'hidden');
+            });
+            topics.forEach(topic=>{
+                d3.select("path[topic='"+ topic+"']" ).on('click', function(){
+                    mainGroup.selectAll('text').filter(t=>{
+                        return t && !t.cloned && t.placed && t.topic === topic;
+                    }).attr({
+                        visibility: 'visible'
+                    });
+                    //Remove the cloned element
+                    document.querySelectorAll("g[cloned='true'][topic='"+topic+"']").forEach(node=>{
+                        node.parentNode.removeChild(node);
+                    });
+                    //Remove the added path for it
+                    document.querySelectorAll("path[wordStream='true'][topic='"+topic+"']").forEach(node=>{
+                        node.parentNode.removeChild(node);
+                    });
+                });
+
             });
             
             //Build the legends
@@ -261,6 +296,10 @@
             });
             axisNodes.selectAll('.tick line').attr({
                 fill: 'none',
+            });
+            axisNodes.selectAll('.tick text').attr({
+                'font-family': 'serif',
+                'font-size': 10
             });
         }
         function styleGridlineNodes(gridlineNodes){
