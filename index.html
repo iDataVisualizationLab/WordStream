@@ -15,14 +15,17 @@
         loadIEEEVisData(draw);
         function draw(data){
             //Layout data
-            var width = 800, height = 300;
+            var width = 800, height = 250;
             var interpolation = "cardinal";
             var axisPadding = 10;
             var margins = {left: 20, top: 20, right: 10, bottom: 30};
             var ws = d3.layout.wordStream()
             .size([width, height])
             .interpolate(interpolation)
-            .fontScale(d3.scale.pow().exponent(4))
+            .fontScale(d3.scale.pow().exponent(2))
+            //.fontScale(d3.scale.linear())
+            .minFontSize(4)
+            .maxFontSize(36)
             .data(data);
             var boxes = ws.boxes();
             
@@ -93,6 +96,7 @@
             var termColorMap = d3.scale.ordinal()
                 .domain(uniqueTerms)
                 .range(c20.range());
+            var placed = true;
             mainGroup.selectAll('g').data(allWords).enter().append('g')
             .attr({
                 transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}
@@ -107,7 +111,7 @@
                 'text-anchor': 'middle',
                 'alignment-baseline': 'middle',
                 topic: function(d){return d.topic;},
-                visibility: function(d, i){ return d.placed ? "visible": "hidden";}
+                visibility: function(d, i){ return d.placed ? (placed? "visible": "hidden"): (placed? "hidden": "visible");}
             });
             //Try
             var prevColor;
@@ -171,7 +175,7 @@
                     d3.select(clonedNode).attr({
                         visibility: "visible",
                         stroke: 'none',
-                        'stroke-size': 0
+                        'stroke-size': 0,
                     });
                     var clonedParentNode = t.parentNode.cloneNode(false);
                     clonedParentNode.appendChild(clonedNode);
