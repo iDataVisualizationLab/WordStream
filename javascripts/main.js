@@ -30,7 +30,7 @@ function addDatasetsOptions() {
     fileName = document.getElementById("datasetsSelect").value;
     loadData();
 }
-let spinner;
+var spinner;
 function loadData(){
     // START: loader spinner settings ****************************
     let opts = {
