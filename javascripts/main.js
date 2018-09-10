@@ -80,17 +80,18 @@ function loadNewData(event) {
 
 function draw(data){
     //Layout data
+    let font = "Arial";
     let interpolation = "cardinal";
     let axisPadding = 10;
     let margins = {left: 20, top: 20, right: 10, bottom: 30};
     let ws = d3.layout.wordStream()
     .size([width, height])
     .interpolate(interpolation)
-    //.fontScale(d3.scale.pow().exponent(2))
     .fontScale(d3.scale.linear())
     .minFontSize(4)
     .maxFontSize(36)
-    .data(data);
+    .data(data)
+        .font(font);
     let boxes = ws.boxes();
     
     //Display data
@@ -169,15 +170,13 @@ function draw(data){
     }).append('text')
     .text(function(d){return d.text;})
     .attr({
-        'font-family': 'Impact',
+        'font-family': font,
         'font-size': function(d){return d.fontSize;},
-        //fill: function(d){return topicColorMap(d.topic);},
-        //fill: function(d, i){return color(i);},
         fill: function(d, i){return termColorMap(d.text);},
         'text-anchor': 'middle',
         'alignment-baseline': 'middle',
         topic: function(d){return d.topic;},
-        visibility: function(d, i){ return d.placed ? (placed? "visible": "hidden"): (placed? "hidden": "visible");}
+        visibility: function(d){ return d.placed ? (placed? "visible": "hidden"): (placed? "hidden": "visible");}
     });
     //Try
     let prevColor;
