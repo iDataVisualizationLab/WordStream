@@ -12,7 +12,7 @@ let fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel","Esquir
 let initialDataset = "EmptyWheel";
 let categories = ["person","location","organization","miscellaneous"];
 
-let fileName;
+var fileName;
 
 
 addDatasetsOptions();
@@ -81,7 +81,7 @@ function loadNewData(event) {
 function draw(data){
     //Layout data
     let font = "Arial";
-    let interpolation = "cardinal";
+    let interpolation = "linear";
     let axisPadding = 10;
     let margins = {left: 20, top: 20, right: 10, bottom: 30};
     let ws = d3.layout.wordStream()
