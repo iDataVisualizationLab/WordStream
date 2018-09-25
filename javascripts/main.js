@@ -81,7 +81,7 @@ function loadNewData(event) {
 function draw(data){
     //Layout data
     let font = "Arial";
-    let interpolation = "linear";
+    let interpolation = "cardinal";
     let axisPadding = 10;
     let margins = {left: 20, top: 20, right: 10, bottom: 30};
     let ws = d3.layout.wordStream()
