@@ -9,7 +9,7 @@
 </head>
 <body>
     <script>
-        var url = "../data/emptywheel.csv";
+        var url = "../data/emptywheel.tsv";
         d3.csv(url, function(error, rawData) {
             if (error) throw error;
             var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');

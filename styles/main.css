@@ -1,0 +1,23 @@
+#holder1 {
+    position:absolute;
+    border-radius: 0px;
+    z-index: 1110;
+    /*top: 94px;*/
+    left: 3px;
+    width: 200px;
+    height: 50px;
+    border: 0px solid rgba(0,0,0, 1);
+    font: normal 18px Impact, Charcoal, sans-serif !important;
+} 
+.styled-select {
+    overflow: hidden;
+    height: 28px;
+    width: 200px;
+    margin-right: 10px;
+    background: #eee;
+}
+#mainsvg{
+    position:absolute;
+    top:-10px;
+    left: 205px;
+}

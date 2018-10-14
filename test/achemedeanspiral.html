@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WordStream</title>
+    <script src="../lib/d3.min.js"></script>
+    <script src="../lib/d3.layout.wordstream.js"></script>
+</head>
+<body>
+    <script>
+        
+        var url = "../data/emptywheel.tsv";
+        var topics = [];
+        d3.tsv(url, function(error, rawData) {
+            if (error) throw error;
+            var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
+            var outputFormat = d3.time.format('%b %Y');
+            topics = d3.keys(rawData[0]).slice(2, 6);
+            //Filter and take only dates in 2013
+            rawData = rawData.filter(function(d){
+                var time = inputFormat.parse(d.time);
+                var starDate =  inputFormat.parse('2013-01-01T00:00:00');
+                var endDate = inputFormat.parse('2013-09-01T00:00:00');
+                return      time  >= starDate && time < endDate; 
+            });
+            var data = {};
+            d3.map(rawData, function(d, i){
+                var date = inputFormat.parse(d.time);
+                var date = outputFormat(date);
+                topics.forEach(topic => {
+                    if(!data[date]) data[date] = {};
+                    data[date][topic] += data[date][topic] ? ('|' +d[topic]): (d[topic]); 
+                });
+            });
+            var data = d3.keys(data).map(function(date, i){
+                var words = {};
+                topics.forEach(topic => {
+                    var raw = {};
+                    raw[topic] = data[date][topic].split('|');
+                    //Count word frequencies
+                    var counts = raw[topic].reduce(function(obj, word){
+                        if(!obj[word]){
+                            obj[word] = 0;
+                        }
+                        obj[word]++;
+                        return obj;
+                    }, {});
+                    //Convert to array of objects
+                    words[topic] = d3.keys(counts).map(function(d){
+                        return{
+                            text: d,
+                            frequency: counts[d],
+                            topic: topic
+                        }
+                    }).sort(function(a, b){//sort the terms by frequency
+                        return b.frequency-a.frequency;
+                    }).filter(function(d){return d.text; })//filter out empty words
+                    .slice(0, 15);
+                });
+                return {
+                    date: date,
+                    words: words
+                }
+            }).sort(function(a, b){//sort by date
+                return outputFormat.parse(a.date) - outputFormat.parse(b.date);
+            });
+            draw(data);
+        });
+
+        function draw(data){
+            var width = 800, height = 800;
+            var ws = d3.layout.wordStream()
+            .size([width, height])
+            .data(data);
+            var boxWidth = width/data.length;
+            var boxes = ws.buildBoxes(data);
+
+            var frequencyScale = ws.frequencyScale();
+
+            var area = d3.svg.area()
+            .interpolate('cardinal')
+            .x(function(d){return (d.x);})
+            .y0(function(d){return frequencyScale(d.y0);})
+            .y1(function(d){return frequencyScale(d.y0 + d.y); });
+
+            var color = d3.scale.category10();
+            var svg = d3.select("body").append('svg').attr({
+                width: width,
+                height: height
+            });
+            var paths = svg.append('g').attr('transform', 'translate(' + 0 + ',' + 0 + ')');
+            boxes.layers = boxes.layers.slice(0, 2);
+            paths.selectAll('path')
+                .data(boxes.layers)
+                .enter()
+                .append('path')
+                .attr({
+                    'd': area,
+                    'fill-opacity': 0.3,
+                    'stroke-size': 0.3,
+                    'stroke': 'black'
+                })
+                .style('fill', function () {
+                    return color(Math.random());
+                }); 
+            var topics = boxes.topics.slice(0, 2);
+            topics.forEach(topic=>{
+                var topicGroup = svg.append('g');
+                topicGroup.selectAll('g').data(boxes.innerBoxes[topic]).enter()
+                .append('g').attr({
+                    transform: function(d){return 'translate('+d.x+', '+frequencyScale(d.y)+')';}
+                }).append('rect').attr({
+                    x: 0,
+                    y: 0,
+                    width: boxWidth,
+                    height: function(d){return frequencyScale(d.height);},
+                    fill: 'none',
+                    stroke: 'black',
+                    'stroke-size': 1,
+                    'opacity': 0.5,
+                    'stroke-dasharray': "3, 3"
+                });
+            });
+            //Draw a spiral
+            var box = boxes.innerBoxes["location"][1];
+            var path = place(box, ws.spiral());
+            var boxSpiral = svg.append('g')
+            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+            .append("path").attr({
+                "d": path,
+                "fill": "none",
+                "stroke-width": 0.3,
+                "stroke": "black",
+                "stroke-opacity": 0.5
+            });
+        };
+        function place(box, spiral){
+            var bw = box.width,
+                bh = box.height,
+                maxDelta = ~~Math.sqrt((bw*bw) + (bh*bh)),
+                startX =  ~~(box.x + (bw >> 1)),
+                startY =  ~~(box.y + (bh >> 1)),
+                s = spiral([bw, bh]), 
+                dt = Math.random() < .5 ? 1 : -1,
+                t = -dt,
+                dxdy, dx, dy;
+            var pathData = "M"+startX+" "+startY;
+            while (dxdy = s(t += dt)) {
+                dx = ~~dxdy[0];
+                dy = ~~dxdy[1];
+                
+                    if (Math.max(Math.abs(dx), Math.abs(dy)) >= (maxDelta>>1))
+                        break;
+                    pathData += " " + (startX + dx) + " " + (startY + dy);
+                
+            }
+            return pathData;
+        }
+    </script>
+</body>
+</html>

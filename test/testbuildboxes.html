@@ -9,35 +9,35 @@
 </head>
 <body>
     <script>
-        
-        var url = "../data/emptywheel.csv";
-        var topics = [];
-        d3.csv(url, function(error, rawData) {
+
+        var fileName = "../data/VIS_papers.tsv";
+        categories = categories = ["Vis","VAST","InfoVis","SciVis"];
+        var topics = categories;
+        d3.tsv(fileName, function(error, rawData) {
             if (error) throw error;
-            var inputFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
-            var outputFormat = d3.time.format('%b %Y');
-            topics = d3.keys(rawData[0]).slice(2, 6);
-            //Filter and take only dates in 2013
-            rawData = rawData.filter(function(d){
-                var time = inputFormat.parse(d.time);
-                var starDate =  inputFormat.parse('2013-01-01T00:00:00');
-                var endDate = inputFormat.parse('2014-01-01T00:00:00');
-                return      time  >= starDate && time < endDate; 
+            //Filter
+            var startYear = 2011;
+            var endYear = 2016;
+            if(fileName.indexOf("PopCha")>=0 || fileName.indexOf("Cards_Fries")>=0 || fileName.indexOf("Cards_PC")>=0){
+                startYear = 2007;
+                endYear = 2013;
+            }
+            rawData = rawData.filter(d=>{
+                return d.Year >= startYear && d.Year <= endYear;
             });
-            var data = {};
+            var data={};
             d3.map(rawData, function(d, i){
-                var date = inputFormat.parse(d.time);
-                var date = outputFormat(date);
-                topics.forEach(topic => {
-                    if(!data[date]) data[date] = {};
-                    data[date][topic] += data[date][topic] ? ('|' +d[topic]): (d[topic]); 
-                });
+                var year = +d["Year"];
+                var topic = d["Conference"];
+                if(!data[year]) data[year] = {};
+                data[year][topic] = (data[year][topic]) ? ((data[year][topic])+";" + d["Author Names"]): (d["Author Names"]);
             });
-            var data = d3.keys(data).map(function(date, i){
+            var data = d3.keys(data).map(function(year, i){
                 var words = {};
                 topics.forEach(topic => {
                     var raw = {};
-                    raw[topic] = data[date][topic].split('|');
+                    if(!data[year][topic]) data[year][topic] = "";
+                    raw[topic] = data[year][topic].split(";");
                     //Count word frequencies
                     var counts = raw[topic].reduce(function(obj, word){
                         if(!obj[word]){
@@ -56,20 +56,20 @@
                     }).sort(function(a, b){//sort the terms by frequency
                         return b.frequency-a.frequency;
                     }).filter(function(d){return d.text; })//filter out empty words
-                    .slice(0, 15);
+                        .slice(0, 45);
                 });
                 return {
-                    date: date,
+                    date: year,
                     words: words
                 }
             }).sort(function(a, b){//sort by date
-                return outputFormat.parse(a.date) - outputFormat.parse(b.date);
+                return a.date - b.date;
             });
             draw(data);
         });
 
         function draw(data){
-            var width = 1200, height = 600;
+            var width = 800, height = 500;
             var ws = d3.layout.wordStream()
             .size([width, height])
             .data(data);
@@ -89,26 +89,38 @@
                 width: width,
                 height: height
             });
-            
-            svg.selectAll('path')
+            var paths = svg.append('g').attr('transform', 'translate(' + 0 + ',' + 0 + ')');
+            // boxes.layers = boxes.layers.slice(0, 2);
+            paths.selectAll('path')
                 .data(boxes.layers)
                 .enter()
                 .append('path')
-                .attr('d', area)
+                .attr({
+                    'd': area,
+                    'fill-opacity': 0.3,
+                    'stroke-size': 0.3,
+                    'stroke': 'black'
+                })
                 .style('fill', function () {
                     return color(Math.random());
                 }); 
-            var topic = 'person';
-            var topicGroup = svg.selectAll('g').data(boxes.innerBoxes[topic]).enter()
-            .append('g').attr({
-                transform: function(d){return 'translate('+d.x+', '+frequencyScale(d.y)+')';}
-            }).append('rect').attr({
-                x: 0,
-                y: 0,
-                width: boxWidth,
-                height: function(d){return frequencyScale(d.height);},
-                fill: 'none',
-                stroke: 'black'
+            // var topics = boxes.topics.slice(0, 2);
+            topics.forEach(topic=>{
+                var topicGroup = svg.append('g');
+                topicGroup.selectAll('g').data(boxes.innerBoxes[topic]).enter()
+                .append('g').attr({
+                    transform: function(d){return 'translate('+d.x+', '+frequencyScale(d.y)+')';}
+                }).append('rect').attr({
+                    x: 0,
+                    y: 0,
+                    width: boxWidth,
+                    height: function(d){return frequencyScale(d.height);},
+                    fill: 'none',
+                    stroke: 'black',
+                    'stroke-size': 1,
+                    'opacity': 0.5,
+                    'stroke-dasharray': "3, 3"
+                });
             });
         };
     </script>
