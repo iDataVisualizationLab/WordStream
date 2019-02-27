@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src="lib/d3.min.js"></script>
+<meta charset="utf-8">
+<title>TimeArcs</title>
+<body>
+<nav class="navi">
+    <ul>
+        <li><a target="_blank" href="index.html">WordStream</a></li>
+        <li  style="background-color: antiquewhite"><a target="_blank" href="timeArcs.html">TimeArcs</a></li>
+    </ul>
+</nav>
+
+<!--!<button onclick="detactTimeSeries()">Unroll time series </button>!-->
+
+<input type="checkbox" id="checkbox1" value="value2" class="check" onclick="update()">
+<label for="checkbox1">Area graph only</label>
+
+<input id="search">
+<button type="button" onclick="searchNode()">Search</button>
+
+<progress value="0" max="100" id="progBar">
+    <span id="downloadProgress">
+        <!-- Your fallback goes here -->
+    </span>
+</progress>
+<label id="progUpdate">
+    <!-- Success Message -->
+</label>
+<link rel="stylesheet" type="text/css" href="styles/msdropdown/dd.css" />
+<link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
+<script src="javascripts/jquery/jquery-1.9.0.min.js"></script>
+<script src="javascripts/msdropdown/jquery.dd.js"></script>
+<script src="javascripts/msdropdown/select.js"></script>
+<script src="javascripts/main.js"></script>
+<script src="./lib/fisheye.js"></script>
+<script src="./lib/select2.min.js"></script>
+<script src="javascripts/util.js"></script>
+<script src="javascripts/sliderRelationship.js"></script>
+<script src="javascripts/streamGraph.js"></script>
+<script src="javascripts/stopList.js"></script>
+<script src="javascripts/timeArcs.js"></script>
+<script type='text/javascript' src="http://code.jquery.com/ui/1.11.0/jquery-ui.min.js"> </script>
+<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css" />
+<script src="javascripts/saveFriesCards.js"></script>
+<button onclick="saveTimeArcsData()">Save data for TimeArcs</button>
+
+<script src="javascripts/searchBox.js"></script>
+Time axis goes from left (2005) to right (2014)<br>
+Terms often appeared together in a blog are connected by a thicker link.<br>
+
+</body>

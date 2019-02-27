@@ -1,26 +1,37 @@
-let minWidth = screen.availWidth, height = 800;
-let svg = d3.select("body").append('svg').attr({
-    width: minWidth,
-    height: height,
-    id: "mainsvg"
+// pre-defined size
+var initWidth = 2000,
+    initHeight = 1000,
+    initMinFont = 14,
+    initMaxFont = 28,
+    initFlag = "none",
+    topRank;
+
+var svg = d3.select("body").append('svg')
+    .attr({
+    width: initWidth,
+    height: initHeight,
+    id: "mainsvg",
 });
 
-// let fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
+var mainGroup, axisGroup, xGridlinesGroup, opacScale;
+
+// var fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
 //                 ,"VIS_papers","IMDB","PopCha","Cards_PC","Cards_Fries"]
 
-let fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel","Esquire","FactCheck", "VIS_papers", "IMDB","PopCha","Cards_PC","Cards_Fries","CS_TTU"]
+var fileList = ["QuantumComputing", "ACLED", "H.E.A.T.Map", "GTD", "WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel","Esquire","FactCheck","VIS_papers", "IMDB","PopCha","Cards_PC","Cards_Fries"
+];
 
-let initialDataset = "CS_TTU";
-let categories = ["person","location","organization","miscellaneous"];
+var initialDataset = "Huffington";
+var categories = ["person","location","organization","miscellaneous"];
 
 var fileName;
 
 addDatasetsOptions();
 function addDatasetsOptions() {
-    let select = document.getElementById("datasetsSelect");
-    for(let i = 0; i < fileList.length; i++) {
-        let opt = fileList[i];
-        let el = document.createElement("option");
+    var select = document.getElementById("datasetsSelect");
+    for(var i = 0; i < fileList.length; i++) {
+        var opt = fileList[i];
+        var el = document.createElement("option");
         el.textContent = opt;
         el.value = opt;
         el["data-image"]="images2/datasetThumnails/"+fileList[i]+".png";
@@ -33,7 +44,7 @@ function addDatasetsOptions() {
 var spinner;
 function loadData(){
     // START: loader spinner settings ****************************
-    let opts = {
+    var opts = {
         lines: 25, // The number of lines to draw
         length: 15, // The length of each line
         width: 5, // The line thickness
@@ -43,174 +54,184 @@ function loadData(){
         trail: 50, // Afterglow percentage
         className: 'spinner', // The CSS class to assign to the spinner
     };
-    let target = document.getElementById('loadingSpinner');
+    var target = document.getElementById('loadingSpinner');
     spinner = new Spinner(opts).spin(target);
     // END: loader spinner settings ****************************
-    fileName = "data/"+fileName+".tsv"; // Add data folder path
+
     if (fileName.indexOf("Cards_Fries")>=0){
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
         categories = ["increases_activity", "decreases_activity"];
-        loadAuthorData(draw, 100);
-    }
-    else if (fileName.indexOf("CS_TTU")>=0){
-        categories = ["Data Science", "High Performance Computing", "Software Engineering","Artificial Intelligence", "Security"];
-        loadCS(drawCS, 100);
+        loadAuthorData(draw, topRank200()
+            ,drawTimeArcs
+        );
+
     }
     else if (fileName.indexOf("Cards_PC")>=0){
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
         categories = ["adds_modification", "removes_modification", "increases","decreases", "binds", "translocation"];
-        loadAuthorData(draw, 100);
+        loadAuthorData(draw, topRank200()
+            , drawTimeArcs
+        );
+
     }
     else if (fileName.indexOf("PopCha")>=0){
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
         categories = ["Comedy","Drama","Action", "Fantasy", "Horror"];
-        loadAuthorData(drawpop, 1000);
+        loadAuthorData(draw, topRank200()
+            , drawTimeArcs
+        );
+
     }
     else if (fileName.indexOf("IMDB")>=0){
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
         categories = ["Comedy","Drama","Action", "Family"];
-        loadAuthorData(draw, 20);
+        loadAuthorData(draw, topRank45()
+            , drawTimeArcs
+        );
+
     }
     else if (fileName.indexOf("VIS")>=0){
-        categories = categories = ["Vis","VAST","InfoVis","SciVis"];
-        loadAuthorData(draw, 20);
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
+        categories = ["Vis","VAST","InfoVis","SciVis"];
+        loadAuthorData(draw, topRank45()
+            , drawTimeArcs
+        );
+
     }
-    else if (fileName.indexOf("Huffington")>=0){
-        categories = categories = ["person","location","organization","miscellaneous"];
-        loadBlogPostData(draw, 45);
-    }
-    else if (fileName.indexOf("CrooksAndLiars")>=0){
-        categories = categories = ["person","location","organization","miscellaneous"];
-        loadBlogPostData(draw, 40);
-    }
-    else if (fileName.indexOf("EmptyWheel")>=0) {
-        categories = categories = ["person", "location", "organization", "miscellaneous"];
-        loadBlogPostData(draw, 40);
-    }
-    else if (fileName.indexOf("Esquire")>=0) {
-        categories = categories = ["person", "location", "organization", "miscellaneous"];
-        loadBlogPostData(draw, 40);
+    else if (fileName.indexOf("QuantumComputing")>=0){
+        fileName = "data/"+fileName+".tsv"; // Add data folder path
+        categories = ["Unknown citation","Have citation","Affiliations","Author"];
+        loadQuantum(draw, 20);
+
     }
     else{
+        fileName = "data/"+fileName+".tsv";
         categories = ["person","location","organization","miscellaneous"];
-        loadBlogPostData(draw, 30);
+        loadBlogPostData(draw, topRank45()
+            , drawTimeArcs
+        );
+
     }
 }
 function loadNewData(event) {
     svg.selectAll("*").remove();
+    // svg2.selectAll("*").remove();
+    // svg3.selectAll("*").remove();
     fileName = this.options[this.selectedIndex].text;
+    topRank=undefined;
     loadData();
+    d3.selectAll(".topRank").remove();
+    updateTopRank();
 }
-function drawpop(data){
-    draw(data, 1);
-};
 
-function drawCS(data){
-    draw(data, 2)
+function drawTimeArcs(){
+    timeArcs()
 }
-function draw(data, pop){
-    //Layout data
-    let dataWidth;
-    if (pop === 1) {dataWidth = data.length*20;}
-    else if (pop === 2) {dataWidth = data.length*160;}
-    else {dataWidth = data.length*100;}
-
-// function draw(data){
-//     //Layout data
-//     let dataWidth = data.length*100;
-
-    // let width = (dataWidth > minWidth) ? dataWidth:minWidth;
-    let width = dataWidth ;
-    document.getElementById("mainsvg").setAttribute("width",width);
-    let font = "Arial";
-    let interpolation = "cardinal";
-    let bias = 200;
-    let offsetLegend = 0;
-    let axisPadding = 10;
-    let margins = {left: 20, top: 20, right: 10, bottom: 30};
-    let ws = d3.layout.wordStream()
+async function draw(data){
+    var t0 = performance.now();
+    var width = initWidth  ;
+    var height = initHeight;
+    var font = "Arial";
+    var interpolation = "cardinal";
+    var bias = 200;
+    var offsetLegend = 0;
+    var axisPadding = 10;
+    var margins = {left: 20, top: 20, right: 10, bottom: 30};
+    var ws = d3.layout.wordStream()
         .size([width, height])
         .interpolate(interpolation)
-        .fontScale(d3.scale.linear())
-        .minFontSize(10)
-        .maxFontSize(38)
+        .fontScale(d3.scale.log())
+        .minFontSize(initMinFont)
+        .maxFontSize(initMaxFont)
         .data(data)
-        .font(font);
-    let boxes = ws.boxes(),
+        .font(font)
+        .flag(initFlag);
+    var boxes = ws.boxes(),     // initial boxes
         minFreq = ws.minFreq(),
-        maxFreq = ws.maxFreq();
-
+        maxFreq = ws.maxFreq(),
+        minSud = ws.minSud(),
+        maxSud = ws.maxSud()
+    ;
+    var t1 = performance.now();
+    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
     //Display data
-    let legendFontSize = 20;
-    let legendHeight = boxes.topics.length*legendFontSize;
+    var legendFontSize = 20;
+    var legendHeight = boxes.topics.length*legendFontSize;
     //set svg data.
     svg.attr({
         width: width + margins.left + margins.top,
-        height: height + margins.top + margins.bottom + axisPadding + offsetLegend+legendHeight + bias
+        height: height + margins.top + margins.bottom + axisPadding + offsetLegend + legendHeight
     });
 
-    let area = d3.svg.area()
+    var area = d3.svg.area()
         .interpolate(interpolation)
         .x(function(d){return (d.x);})
         .y0(function(d){return d.y0;})
         .y1(function(d){return (d.y0 + d.y); });
 
-    function color(n) {
-        var colores = ["#008fd0", "#FC660F", "#489d4c", "#E00D37", "#8D6BB8", "#85584E" , "#8d6bb8", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eae"];
-        return colores[n % colores.length];
-    }
+    // function color(n) {
+    //     var colores = ["#008fd0", "#FC660F", "#489d4c", "#E00D37", "#8D6BB8", "#85584E" , "#8d6bb8", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eae"];
+    //     return colores[n % colores.length];
+    // }
 
-    // let color = d3.scale.category10();
+    var color = d3.scale.category10();
     //Display time axes
-    let dates = [];
+    var dates = [];
     boxes.data.forEach(row =>{
         dates.push(row.date);
     });
 
-    let xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
-    let xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
-    let axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height+margins.top+axisPadding+legendHeight+offsetLegend) + ')');
-    let axisNodes = axisGroup.call(xAxis);
+    var xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
+    var xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
+    axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height+margins.top+axisPadding+legendHeight+offsetLegend) + ')');
+    var axisNodes = axisGroup.call(xAxis);
     styleAxis(axisNodes);
     //Display the vertical gridline
-    let xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length+1)).rangeBands([0, width+width/boxes.data.length]);
-    let xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
-    let xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top + axisPadding+legendHeight+margins.bottom+offsetLegend) + ')');
-    let gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height-axisPadding-legendHeight-margins.bottom, 0, 0).tickFormat(''));
+    var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length+1)).rangeBands([0, width+width/boxes.data.length]);
+    var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
+
+    xGridlinesGroup = svg.append('g')
+        .attr('transform', 'translate(' + (margins.left-width/boxes.data.length/2) + ',' + (height+margins.top + axisPadding+legendHeight+margins.bottom+offsetLegend) + ')');
+
+    var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height-axisPadding-legendHeight-margins.bottom, 0, 0).tickFormat(''));
     styleGridlineNodes(gridlineNodes);
 
     //Main group
-    let mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
-    let wordStreamG = mainGroup.append('g');
+    mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
+    var wordStreamG = mainGroup.append('g');
 
     // =============== Get BOUNDARY and LAYERPATH ===============
-    let lineCardinal = d3.svg.line()
+    var lineCardinal = d3.svg.line()
         .x(function(d) { return d.x; })
         .y(function(d) { return d.y; })
         .interpolate("cardinal");
 
-    let boundary = [];
-    for (let i = 0; i < boxes.layers[0].length; i ++){
-        let tempPoint = Object.assign({}, boxes.layers[0][i]);
+    var boundary = [];
+    for (var i = 0; i < boxes.layers[0].length; i ++){
+        var tempPoint = Object.assign({}, boxes.layers[0][i]);
         tempPoint.y = tempPoint.y0;
         boundary.push(tempPoint);
     }
 
-    for (let i = boxes.layers[boxes.layers.length-1].length-1; i >= 0; i --){
-        let tempPoint2 = Object.assign({}, boxes.layers[boxes.layers.length-1][i]);
+    for (var i = boxes.layers[boxes.layers.length-1].length-1; i >= 0; i --){
+        var tempPoint2 = Object.assign({}, boxes.layers[boxes.layers.length-1][i]);
         tempPoint2.y = tempPoint2.y + tempPoint2.y0;
         boundary.push(tempPoint2);
     }       // Add next (8) elements
 
-    let lenb = boundary.length;
+    var lenb = boundary.length;
 
     // Get the string for path
 
-    let combined = lineCardinal( boundary.slice(0,lenb/2))
+    var combined = lineCardinal( boundary.slice(0,lenb/2))
         + "L"
         + lineCardinal( boundary.slice(lenb/2, lenb))
             .substring(1,lineCardinal( boundary.slice(lenb/2, lenb)).length)
         + "Z";
 
 
-    // ============== DRAW CURVES =================
-    let topics = boxes.topics;
+    // ============== DRAW CURVES AREA =================
+    var topics = boxes.topics;
     mainGroup.selectAll('path')
         .data(boxes.layers)
         .enter()
@@ -226,74 +247,177 @@ function draw(data, pop){
             topic: function(d, i){return topics[i];}
         });
     // ============= Get LAYER PATH ==============
-    let layerPath = mainGroup.selectAll("path").append("path")
+    var layerPath = mainGroup.selectAll("path").append("path")
         .attr("d", combined )
         .attr({
             'fill-opacity': 0.1,
             'stroke-opacity': 0,
         });
-
     // ARRAY OF ALL WORDS
-    let allWords = [];
+    var allWords = [];
     d3.map(boxes.data, function(row){
         boxes.topics.forEach(topic=>{
             allWords = allWords.concat(row.words[topic]);
         });
     });
-    //Color based on term
-    let terms = [];
-    for(i=0; i< allWords.length; i++){
-        terms.concat(allWords[i].text);
-    }
 
-    let opacity = d3.scale.log()
-        .domain([minFreq, maxFreq])
+    console.log("all words:");
+    console.log(allWords);
+
+    if (fileName.indexOf("Huffington") >= 0) {
+        d3.json("data/linksHuff2012.json", function (error, rawLinks) {
+            const threshold = 10;
+            const links = rawLinks.filter(d => d.weight > threshold);
+
+            links.forEach(d => {
+                d.sourceID = d.sourceID.split(".").join("_").split(" ").join("_");
+                d.targetID = d.targetID.split(".").join("_").split(" ").join("_");
+            });
+            let visibleLinks = [];
+
+            // select only links with: word place = true and have same id
+            links.forEach(d => {
+                let s = allWords.find(w => (w.id === d.sourceID) && (w.placed === true));
+                let t = allWords.find(w => (w.id === d.targetID) && (w.placed === true));
+                if ((s !== undefined) && (t !== undefined)) {
+                    d.sourceX = s.x;
+                    d.sourceY = s.y;
+                    d.targetX = t.x;
+                    d.targetY = t.y;
+                    visibleLinks.push(d);
+                }
+            });
+
+            const lineScale = d3.scale.linear()
+                .domain(d3.extent(visibleLinks, d => d.weight))
+                .range([0.5, 3]);
+
+            opacScale = d3.scale.linear()
+                .domain(d3.extent(visibleLinks, d => d.weight))
+                .range([0.5, 1]);
+
+            mainGroup.selectAll(".connection")
+                .data(visibleLinks)
+                .enter()
+                .append("line")
+                .attr("class", "connection")
+                .attr("opacity", 0)
+                .attr({
+                    "x1": d => d.sourceX,
+                    "y1": d => d.sourceY,
+                    "x2": d => d.targetX,
+                    "y2": d => d.targetY,
+                    "stroke": "#444444",
+                    "stroke-opacity": d => opacScale(d.weight),
+                    "stroke-width": d => lineScale(d.weight)
+                });
+
+            drawWords();
+        });
+    }
+    else drawWords();
+
+    function drawWords() {
+
+    var opacity = d3.scale.log()
+        .domain([minSud, maxSud])
         .range([0.4,1]);
 
     // Add moi chu la 1 element <g>, xoay g dung d.rotate
-    let placed = true; // = false de hien thi nhung tu ko dc dien
+    var placed = true; // = false de hien thi nhung tu ko dc dien
 
-    mainGroup.selectAll('g').data(allWords).enter().append('g')
+    //  ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ PLACING WORDS  ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿
+
+    mainGroup.selectAll('.word').data(allWords).enter().append('g')
         .attr({transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}})
+        .attr("class", "word")
         .append('text')
-        .text(function(d){return d.text;})      // add text vao g
+        .text(function(d){return d.text;})
         .attr({
+            "id": d => d.id,
             'font-family': font,
             'font-size': function(d){return d.fontSize;},
             fill: function(d){return color(d.topicIndex);},
-            'fill-opacity': function(d){return opacity(d.frequency)},
+            'fill-opacity': function(d){return opacity(d.sudden)},
+           //'fill-opacity': 0,
             'text-anchor': 'middle',
             'alignment-baseline': 'middle',
             topic: function(d){return d.topic;},
-            visibility: function(d){ return d.placed ? (placed? "visible": "hidden"): (placed? "hidden": "visible");}
+            visibility: function(d){ return d.placed ? ("visible"): ("hidden");}
         });
 
-    // When click a term
-    //Try
-    let prevColor;
-    //Highlight
-    mainGroup.selectAll('text').on('mouseenter', function(){
-        let thisText = d3.select(this);
-        thisText.style('cursor', 'pointer');
-        prevColor = thisText.attr('fill');
+    mainGroup.selectAll(".connection").on("mouseover", function () {
+        var thisLink = d3.select(this);
+        thisLink.style('cursor', 'crosshair');
+         // in order to select by byid, the id must not have space
+        var sourceText = mainGroup.select("#" + thisLink.data()[0].sourceID);
+        var prevSourceColor = sourceText.attr("fill");
+        var targetText = mainGroup.select("#" + thisLink.data()[0].targetID);
+        var prevTargetColor = targetText.attr("fill");
 
-        let text = thisText.text();
-        let topic = thisText.attr('topic');
-        let allTexts = mainGroup.selectAll('text').filter(t =>{
-            return t && t.text === text &&  t.topic === topic;
+        thisLink.attr("stroke-width", 4);
+
+        sourceText.attr({
+            stroke: prevSourceColor,
+            fill: prevSourceColor,
+            'stroke-width': 1.5
         });
-        allTexts.attr({
-            stroke: prevColor,
+
+        targetText.attr({
+            stroke: prevTargetColor,
+            fill: prevTargetColor,
             'stroke-width': 1.5
         });
     });
 
+        mainGroup.selectAll(".connection").on("mouseout", function () {
+            var thisLink = d3.select(this);
+            thisLink.style('cursor', 'crosshair');
+
+            var sourceText = mainGroup.select("#" + thisLink.data()[0].sourceID);
+            var targetText = mainGroup.select("#" + thisLink.data()[0].targetID);
+
+            thisLink.attr("stroke-width", d => opacScale(d.weight));
+
+            sourceText.attr({
+                stroke: 'none',
+                'stroke-width': 0
+            });
+
+            targetText.attr({
+                stroke: 'none',
+                'stroke-width':0
+            });
+        });
+
+    // When click a term
+    //Try
+    var prevColor;
+    // --- Highlight when mouse enter ---
+    mainGroup.selectAll('text').on('mouseenter', function(){  // hover above the word -> select this
+        var thisText = d3.select(this);
+        thisText.style('cursor', 'pointer');
+        prevColor = thisText.attr('fill');
+
+        var text = thisText.text();
+        var topic = thisText.attr('topic');
+        var allTexts = mainGroup.selectAll('text').filter(t =>{
+            return t && t.text === text &&  t.topic === topic;
+        });
+        allTexts.attr({
+            stroke: prevColor,
+            fill: prevColor,
+            'stroke-width': 1.5
+        });
+    });
+
+    // --- Lowlight when mouse out ---
     mainGroup.selectAll('text').on('mouseout', function(){
-        let thisText = d3.select(this);
+        var thisText = d3.select(this);
         thisText.style('cursor', 'default');
-        let text = thisText.text();
-        let topic = thisText.attr('topic');
-        let allTexts = mainGroup.selectAll('text').filter(t =>{
+        var text = thisText.text();
+        var topic = thisText.attr('topic');
+        var allTexts = mainGroup.selectAll('text').filter(t =>{
             return t && !t.cloned && t.text === text &&  t.topic === topic;
         });
         allTexts.attr({
@@ -303,18 +427,19 @@ function draw(data, pop){
     });
     //Click
     mainGroup.selectAll('text').on('click', function(){
-        let thisText = d3.select(this);
-        let text = thisText.text();
-        let topic = thisText.attr('topic');
-        let allTexts = mainGroup.selectAll('text').filter(t =>{
+        var thisText = d3.select(this);
+        var text = thisText.text();
+        var topic = thisText.attr('topic');
+        var allTexts = mainGroup.selectAll('text').filter(t =>{     // group of all the same words
             return t && t.text === text &&  t.topic === topic;
         });
+
         // get the word out
-        //Select the data for the stream layers
-        let streamLayer = d3.select("path[topic='"+ topic+"']" )[0][0].__data__;
+        // Select the data for the stream layers
+        var streamLayer = d3.select("path[topic='"+ topic+"']" )[0][0].__data__; // at this time: not available
 
         //Push all points
-        let points = Array();
+        var points = Array();
         //Initialize all points
         streamLayer.forEach(elm => {
             points.push({
@@ -323,24 +448,24 @@ function draw(data, pop){
                 y: 0//zero as default
             });
         });
-        allTexts[0].forEach(t => {
-            let data = t.__data__;
-            let fontSize = data.fontSize;
+        allTexts[0].forEach(t => {      // for each TEXT
+            var data = t.__data__;
+            var fontSize = data.fontSize;
             //The point
-            let thePoint = points[data.timeStep+1];//+1 since we added 1 to the first point and 1 to the last point.
+            var thePoint = points[data.timeStep+1];//+1 since we added 1 to the first point and 1 to the last point.
             thePoint.y = -data.streamHeight;
             //Set it to visible.
             //Clone the nodes.
-            let clonedNode = t.cloneNode(true);
-            d3.select(clonedNode).attr({
+            var clonedNode = t.cloneNode(true);
+            d3.select(clonedNode).attr({        // add attribute to the cloned node
                 visibility: "visible",
                 stroke: 'none',
                 'stroke-size': 0,
             });
-            let clonedParentNode = t.parentNode.cloneNode(false);
+            var clonedParentNode = t.parentNode.cloneNode(false);   // clone ca parent nua -_- empty
             clonedParentNode.appendChild(clonedNode);
 
-            t.parentNode.parentNode.appendChild(clonedParentNode);
+            t.parentNode.parentNode.appendChild(clonedParentNode);  // append clonedParent vao grandparent
             d3.select(clonedParentNode).attr({
                 cloned: true,
                 topic: topic
@@ -364,12 +489,11 @@ function draw(data, pop){
                 wordStream: true
             });
         //Hide all other texts
-        let allOtherTexts = mainGroup.selectAll('text').filter(t =>{
+        var allOtherTexts = mainGroup.selectAll('text').filter(t =>{
             return t && !t.cloned &&  t.topic === topic;
         });
         allOtherTexts.attr('visibility', 'hidden');
     });
-
 
 
     topics.forEach(topic=>{
@@ -392,8 +516,8 @@ function draw(data, pop){
     });
 
     //Build the legends
-    let legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top+offsetLegend) + ')');
-    let legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
+    var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top+offsetLegend) + ')');
+    var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
         .attr('transform', function(d, i){return 'translate(' + 30 + ',' + (i*legendFontSize+5) + ')';});
     legendNodes.append('circle').attr({
         r: 6,
@@ -402,20 +526,55 @@ function draw(data, pop){
         stroke: 'black',
         'stroke-width': .5,
     });
-    legendNodes.append('text').text(function(d){return d;}).attr("class","axis").attr({
+    legendNodes.append('text').text(function(d){return d;}).attr("class","value").attr({
         'font-size': legendFontSize,
         'alignment-baseline': 'middle',
         dx: 15, dy: 3
 
     });
 
-    //  =========== COMPACTNESS ==============
+    // ========== Write to box =======
 
-    let usedArea = 0, allWordsArea = 0,
+    var metValue = [getTfidf(allWords).toFixed(2),
+        getCompactness(allWords, layerPath)[0].toFixed(2),
+        getCompactness(allWords, layerPath)[1].toFixed(2),
+        getDisplayRate(allWords, maxFreq)[0].toFixed(2),
+        getDisplayRate(allWords, maxFreq)[1].toFixed(3)];
+
+    metric2.selectAll(".metricValue").remove();
+    metric2.selectAll(".metricValue")
+        .data(metValue)
+        .enter()
+        .append("text")
+        .text(d => d)
+        .attr("class","metricValue metricDisplay")
+        .attr("x","0")
+        .attr("y",(d,i) =>43+ 36*i)
+        .attr("font-weight", "bold");
+
+spinner.stop();
+
+}};
+function getTfidf(allWords){
+    var sumTfidfDisplayed = 0;
+    var sumTfidf = 0;
+    allWords.forEach(function (d) {
+        sumTfidf += d.tf_idf;
+        if (d.placed){
+            sumTfidfDisplayed += d.tf_idf;
+        }
+    });
+
+    return sumTfidfDisplayed/sumTfidf;
+}
+
+function getCompactness(allWords, layerPath){
+
+    var usedArea = 0, allWordsArea = 0,
         totalArea, compactness,
         ratio;
 
-    let threshold = 1;        // ignore this size of area
+    var threshold = 1;        // ignore this size of area
 
     allWords.forEach(function (d) {
         allWordsArea += (d.heightBBox * d.widthBBox);
@@ -424,20 +583,23 @@ function draw(data, pop){
         }
     });
 
-    let poly = pathToPolygonViaSubdivision(layerPath,threshold);
+    var poly = pathToPolygonViaSubdivision(layerPath,threshold);
 
-    totalArea = polyArea(poly);
+    totalArea = polyArea(poly);         // area of stream
     compactness = usedArea/totalArea;
     ratio = allWordsArea/totalArea;
 
+    return [compactness, ratio];
+}
+function getDisplayRate(allWords, maxFreq){
     // ======== DISPLAY RATES ===========
-    let displayFreq_1 = 0,        // sum of Display Freqs
+    var displayFreq_1 = 0,        // sum of Display Freqs
         totalFreq_1 = 0;          // total of freq for top 30
 
-    let displayNormFreq_2 = 0,    // sum of Normalized Display Freqs
+    var displayNormFreq_2 = 0,    // sum of Normalized Display Freqs
         numbers_2 = 0;       // number of words displayed
 
-    let norm = d3.scale.linear().domain([0, maxFreq]).range([0,1]);
+    var norm = d3.scale.linear().domain([0, maxFreq]).range([0,1]);
     allWords.forEach(function (d) {
         totalFreq_1 += d.frequency;
         if (d.placed){
@@ -449,46 +611,12 @@ function draw(data, pop){
         }
     });
 
-    let weightedRate = displayFreq_1 / totalFreq_1;
-    let averageNormFreq = displayNormFreq_2 / numbers_2;
+    var weightedRate = displayFreq_1 / totalFreq_1;
+    var averageNormFreq = displayNormFreq_2 / numbers_2;
 
-    // ========== WRITE ==============
-    d3.select('svg').append('g').attr({
-        width: 200,
-        height: 200}).attr('transform', 'translate(' + (margins.left) + ',' + (height + margins.top + axisPadding + legendHeight + margins.bottom+offsetLegend) + ')').append("svg:text").attr('transform','translate (0,20)').attr("class","axis")
-        // .append("svg:tspan").attr('x', 0).attr('dy', 20).text(compactness.toFixed(2) +"  "+ ratio.toFixed(2) +"  "+ weightedRate.toFixed(2) +"  "+ averageNormFreq.toFixed(3))
-        // .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Used Area: " + usedArea
-        // + "  |  Total Area: " + totalArea.toFixed(0) + "  |  Area of all words: " + allWordsArea)
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Compactness: " + compactness.toFixed(2))
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Area of all words = " + ratio.toFixed(2) + " × Total Area" )
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Weighted Display Rate: " + weightedRate.toFixed(2))
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Average Normalized Frequency: " + averageNormFreq.toFixed(3) );
-
-    console.log(compactness.toFixed(2), ratio.toFixed(2), weightedRate.toFixed(2), averageNormFreq.toFixed(3));
-
-    // ============ Get APPROXIMATE AREA ============
-
-    // let aveX = 0, aveY1, aveY2,
-    //     sumY1 = 0, sumY2 = 0;
-    //
-    // for (let q = 0; q < boundary.length; q++){
-    //     if (boundary[q].x > aveX) {aveX = boundary[q].x};
-    //     if (q < lenb/2) {sumY1 += boundary[q].y}
-    //     else (sumY2 += boundary[q].y)
-    // };
-    // aveY1 = sumY1 / (lenb / 2);
-    // aveY2 = sumY2 / (lenb / 2);
-
-    // console.log("Area of grey region: " +totalArea);
-    // console.log("Area aprx: " + (aveY2 - aveY1)*aveX);
-    // console.log("Area within black border: "+getArea(boundary));
-
-    spinner.stop();
-
-
-};
-
-
+    console.log([weightedRate, averageNormFreq]);
+    return [weightedRate, averageNormFreq]
+}
 // path:      an SVG <path> element
 // threshold: a 'close-enough' limit (ignore subdivisions with area less than this)
 // segments:  (optional) how many segments to subdivisions to create at each level
@@ -513,16 +641,16 @@ function pathToPolygonViaSubdivision(path,threshold,segments){
     // If the area of the result is less than the threshold return the endpoints.
     // Otherwise, keep the intermediary points and subdivide each consecutive pair.
     function subdivide(p1,p2){
-        let pts=[p1];
-        for (let i=1,step=(p2.d-p1.d)/segments;i<segments;i++){
+        var pts=[p1];
+        for (var i=1,step=(p2.d-p1.d)/segments;i<segments;i++){
             pts[i] = ptWithLength(p1.d + step*i);
         }
         pts.push(p2);
         if (polyArea(pts)<=threshold) return [p1,p2];
         else {
-            let result = [];
-            for (let j=1;j<pts.length;++j){
-                let mids = subdivide(pts[j-1], pts[j]);
+            var result = [];
+            for (var j=1;j<pts.length;++j){
+                var mids = subdivide(pts[j-1], pts[j]);
                 mids.pop(); // We'll get the last point as the start of the next pair
                 result = result.concat(mids)
             }
@@ -572,6 +700,8 @@ function styleAxis(axisNodes){
         fill: 'none',
     });
     axisNodes.selectAll('.tick text').attr({
+        // 'text-anchor': 'end',
+        // 'transform': 'rotate(-30)',
         'font-family': 'serif',
         'font-size': 14
     });
@@ -583,7 +713,26 @@ function styleGridlineNodes(gridlineNodes){
     });
     gridlineNodes.selectAll('.tick line').attr({
         fill: 'none',
-        'stroke-width': 0.7,
-        stroke: 'lightgray'
+        'stroke-width': 2,
+        stroke: '#aaaaaa',
+        "stroke-dasharray": ("3, 4")
     });
+}
+function topRank200(){
+    if (topRank==undefined){
+        topRank = 200;
+    }
+    return topRank;
+}
+function topRank1000(){
+    if (topRank==undefined){
+        topRank = 1000;
+    }
+    return topRank;
+}
+function topRank45(){
+    if (topRank==undefined){
+        topRank = 50;
+    }
+    return topRank;
 }

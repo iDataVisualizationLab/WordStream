@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/d3.min.js"></script>
+</head>
+<body>
+<script>
+    var stopWordBase =
+        ["brazo", "we're", "it's", "can't", "we’re", "thk", "it’", "chk", "you're", "you'll", "us", "thx", "the",
+            "a", "an", "republicans", "republican", "democrats", "democratic", "and", "democrat", "americans",
+            "american", "america", "hey", "ok", "wanna", "lmao", "lot", "ur", "im", "thank", "you?", "&amp;", "dm",
+            "just", "dont", "lol", "lil", "gonna", "rt", "...", "..", "--", "about", "above", "according",
+            "accordingly", "across", "actually", "adj", "adv", "after", "afterwards", "again", "against", "ago", "ah", "aint", "al", "albeit", "all", "almost", "alone", "along", "already", "also",  "although", "always", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apparently", "appear", "apply", "are", "area", "areas", "arent", "around", "as", "aside", "ask", "asked", "asking", "asks", "at", "available", "ave", "away", "aye", "ba", "back", "backed", "backing", "backs", "basic", "basis", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "began", "begin", "behind", "being", "beings", "below", "beside", "besides", "best", "better", "between", "beyond", "bi", "big", "both", "brief", "but", "by", "call", "called", "came", "can", "cannot", "cant", "certain", "certainly", "cf", "clear", "clearly", "cm", "co", "come", "comes", "concerning", "consequently", "considering", "contain", "containing", "contains", "contrariwise", "corresponding", "could", "couldnt", "course", "currently", "date", "dc", "de", "definitely", "describe", "described", "describes", "despite", "determine", "determined", "di", "did", "didnt", "differ", "different", "differently", "do", "does", "doesnt", "doing", "done", "dont", "double", "down", "downed", "downing", "downs", "downwards", "dr", "dual", "during", "each", "early", "ed", "eg", "eight", "either", "eleven", "else", "elsewhere", "empty",  "enough", "entirely", "especially", "est", "et", "etc", "even", "evenly", "ever", "every", "everybody", "everyone", "everything", "everywhere", "everywhere", "exactly", "example", "except", "excepted", "excepting", "exception", "exclude", "excluding", "exclusive", "face", "faces", "fact", "facts", "far", "felt", "few", "fifteen", "fifth", "find", "finds", "first", "five", "for", "forth", "forty", "forward", "found", "four", "fr", "from", "ft", "full", "fully", "further", "furthered", "furthering", "furthermore", "furthers", "furthest", "gave", "general", "generally", "get", "gets", "getting", "give", "given", "gives", "go", "goes", "going", "gone", "good", "goods", "got", "gotten", "great", "greater", "greatest", "had", "hadnt", "half", "halves", "happens", "hardly", "has", "hasnt", "hast", "hath", "have", "having", "he", "hear", "heard", "hed", "hello", "help", "hence", "henceforth", "her", "here", "hereabouts", "hereafter", "hereby", "herein", "hereto", "hereupon", "hers", "herself", "hes", "high", "higher", "highest", "him", "himself", "hindmost", "his", "hither", "hitherto", "hopefully", "how", "howbeit", "however", "howsoever", "hr", "hundred", "hyper", "id", "ie", "if", "ii", "iii", "im", "immediate", "important", "in", "inasmuch", "inc", "including", "indeed", "indicate", "indicated", "indicates", "insofar", "insomuch", "instead", "int", "interest", "interested", "interesting", "interests", "into", "intra", "intro", "inward", "inwards", "is", "isnt", "it", "itd", "item", "itll", "its", "itself", "iv", "ive", "ix", "just", "keep", "keeps", "kept", "kg", "km", "knew", "know", "known", "knows", "large", "largely", "last", "lat", "lately", "later", "latest", "latter", "latterly", "least", "left", "less", "lest", "let", "lets", "like", "likely", "little", "ll", "lon", "long", "longer", "longest", "look", "looks", "ltd", "lt", "made", "made", "mainly", "make", "making", "many", "may", "maybe", "md", "me", "mean", "means", "meant", "meantime", "meanwhile", "merely", "micro", "might", "mine", "mm", "more", "moreover", "morning", "most", "mostly", "move", "mph", "mr", "mrs", "ms", "mt", "much", "multi", "must", "mustnt", "my", "myself", "name", "namely", "near", "nearly", "necessary", "need", "needed", "needing", "neednt", "needs", "neither", "never", "nevertheless", "new", "newer", "newest", "news", "next", "nine", "no", "nobody", "non", "none", "nonetheless", "noone", "nope", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowadays", "nowhere", "nt", "number", "obs", "obviously", "of", "off", "often", "oh", "okay", "old", "older", "oldest", "on", "once", "one", "ones", "only", "onto", "op", "open", "opened", "opening", "opens", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "oz", "page", "part", "parted", "particular", "particularly", "parting", "parts", "per", "perhaps", "phr", "pl", "please", "plus", "pm", "possible", "pre", "presumably", "pro", "probably", "provided", "pt", "put", "puts", "quite", "rather", "re", "really", "reasonably", "regarding", "regardless", "regards", "related", "relatively", "required", "respectively", "results", "said", "saith", "same", "saw", "say", "saying", "says", "sec", "second", "secondly", "seconds", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "sees", "seldom", "self", "selves", "semi", "seven", "several", "shall", "shalt", "she", "shes", "should", "shouldnt", "show", "showed", "showing", "shown", "shows", "side", "sides", "since", "sir", "sixty", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "st", "still", "such", "supposing", "sure", "take", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "thatd", "thatll", "thats", "the", "thee", "their", "theirs", "them", "themselves", "then", "thence", "thenceforth", "there", "thereabout", "thereabouts", "thereafter", "thereby", "thered", "therefore", "therein", "thereof", "thereon", "theres", "thereto", "thereupon", "therll", "these", "they", "theyve", "thine", "thing", "things", "think", "thinks", "third", "this", "thorough", "thoroughly", "those", "thou", "though", "three", "thrice", "through", "throughout", "thru", "thus", "thy", "thyself", "till", "time", "tm", "to", "today", "together", "told", "too", "took", "toward", "towards", "trans", "tried", "tries", "truly", "trying", "turn", "turned", "turning", "turns", "twelve", "twenty", "twice", "two", "under", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upward", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "various", "ve", "very", "vi", "vii", "viii", "via", "viz", "vs", "was", "wasnt", "way", "ways", "we", "well", "wells", "went", "were", "werent", "weve", "what", "whatever", "whatsoever", "when", "whence", "whenever", "whensoever", "where", "whereabouts", "whereafter", "whereas", "whereat", "whereby", "wherefore", "wherefrom", "wherein", "whereinto", "whereof", "whereon", "wheresoever", "whereto", "whereunto", "whereupon", "wherever", "wherewith", "whether", "whew", "which", "whichever", "whichsoever", "while", "whilst", "whither", "who", "whoa", "whoever", "whole", "whom", "whomever", "whomsoever", "whose", "whosoever", "why", "will", "willing", "wilt", "wish", "with", "within", "without", "wonder", "wont",  "worse", "worst", "would", "wouldnt", "wt", "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix", "xx", "yd", "ye", "year", "years", "yes", "yet", "yippee", "you", "youd", "youll", "young", "younger", "youngest", "your", "youre", "yours", "yourself", "yourselves", "youve", "yup", "zero", "Lymphatic", "'s", "january", "february",
+            "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "1st",
+            "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+
+            // ,"province", "and/or", "district", "as", "reported",
+            "jan", "feb", "mar", "apr", "may", "june", "july", "aug", "sept", "oct", "nov", "dec", "wa","a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ha", "bu", "jk", "hi"
+        ];
+
+    // function capitalize(array) {
+    //     let temp = [];
+    //     array.forEach((d, i) => {
+    //         temp.push(d.charAt(0).toUpperCase() + d.slice(1));
+    //     });
+    //     return array.concat(temp);
+    // }
+    //
+    // var stopWordList = capitalize(stopWordBase);
+
+    var dataset = [], removeIndexObj = {}, removeIndex = [];
+    d3.json("../data/outputExtreme.json", function (error, data) {
+        console.log(data)
+    })
+    d3.json("../data/outputExtreme.json", function (error, data) {
+        // remove duplicates
+        for (let i = 0; i < data.length; i++){
+            for (let j = i+1; j < data.length; j++){
+                if (
+                    (data[i]["city"] === data[j]["city"]) &&
+                    (data[i]["date"] === data[j]["date"]) &&
+                    (data[i]["description"] === data[j]["description"]) &&
+                    (data[i]["ideology"] === data[j]["ideology"]) &&
+                    (data[i]["state"] === data[j]["state"]) &&
+                    (data[i]["type"] === data[j]["type"])
+                ){
+                    console.log(i,j);
+                    removeIndexObj[j] = 1;
+                }
+            }
+        }
+        removeIndex = d3.keys(removeIndexObj);
+        removeIndex.sort((a,b) => a-b);
+
+        for (let i = removeIndex.length-1; i >= 0; i--){
+            data.splice(removeIndex[i],1)
+        }
+
+        // remove stop words
+        data.forEach((d, i) => {
+            delete d.image;
+            delete d.group;
+            delete d.id;
+            d["words"] = [];
+            if (d["keywords"].length === 0){
+                d["keywords"] = d["description"].split(" ")
+            }
+            d["keywords"].forEach(chunk => {
+                chunk.toLowerCase().split(",").forEach(phrase => {
+                    phrase = phrase.trim().replace(/\.|\,|\(|\)|\;|\:|\[|\]|\&|\!|\?|\#|\"/gi, '');
+
+                    let wordArray = [];
+                    phrase.split(" ").forEach(word => {
+                        if (stopWordBase.find(sw => sw === word) === undefined) {
+                            wordArray.push(word);
+                        }
+                    });
+
+                    let p = wordArray.join(" ").trim();
+                    if (p !== "") d["words"].push(p);
+                })
+            })
+        });
+
+        console.log(data)
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WordCloud</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
+    <script src="../lib/d3.layout.cloud.js"></script>
+    <script src="../lib/d3-tip.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
+</head>
+<body>
+<section  class="timeline" id = "WordcloudImg"></section >
+<script>
+    var categories = ["person","location","organization","miscellaneous"];
+
+    d3.json("../data/wcloudHuff.json", function(error, data){
+        drawWordCloud(data);
+    });
+
+    function drawWordCloud(words){
+        var font ="Arial";
+        var word_count = {};
+        words.forEach(date=> {
+            categories.forEach((c,i) =>{
+                date.words[c].slice(0,3).forEach(w=> word_count[w.text] = {sudden: w.sudden, category: [c,i]})})
+        });
+        var margin = {top: 0, right: 0, bottom: 0, left: 0};
+        var width = 1800;
+        var height = 700;
+        d3.select("#WordcloudImg").select('svg').remove();
+        d3.select("#WordcloudImg")
+            .append('svg')
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("id","wordchart")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var svg_location = "#wordchart";
+
+
+        // var fill = color;
+
+        var word_entries = d3.entries(word_count);
+
+        var xScale = d3.scaleLinear()
+            .domain([0, d3.max(word_entries, function(d) {
+                return d.value.sudden;
+            })
+            ])
+            .range([26,50]);
+
+        var opacity = d3.scaleSqrt()
+            .domain([0, d3.max(word_entries, function(d) {
+                return d.value.sudden;
+            })
+            ])
+            .range([0.4,1]);
+
+        d3.layout.cloud().size([width, height])
+            .timeInterval(20)
+            .words(word_entries)
+            .fontSize(function(d) { return xScale(d.value.sudden); })
+            .text(function(d) { return d.key; })
+            //.rotate(function() { return (~~(Math.random() * 6) - 3) * 8 })
+            .rotate(0)
+            .font(font)
+            .on("end", draw)
+            .start();
+
+        function draw(words) {
+            d3.select(svg_location).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + [width >> 1, height >> 1] + ")")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return xScale(+d.value.sudden) + "px"; })
+                .style("font-family", font)
+                // .style("fill", function(d, i) { return fill(d.value.category[1]); })
+                .style("fill", function(d, i) { return "#000" })
+                .style("fill-opacity", function(d) { return opacity(+d.value.sudden) })
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.key; });
+        }
+
+        d3.layout.cloud().stop();
+    }
+</script>
+</body>
+</html>
