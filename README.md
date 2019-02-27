@@ -1,6 +1,6 @@
 # WordStream: An Interactive Tool for Topic Evolution
 
-Demo: https://nnhuyen.github.io/WordStream/
+Demo: https://idatavisualizationlab.github.io/WordStream/
 
 ![ScreenShot](https://github.com/nnhuyen/WordStream/blob/master/images/Huffington.png)
 
