@@ -1,6 +1,6 @@
 # WordStream
 
-Demo: https://nnhuyen.github.io/WordStream/
+Demo: https://iDataVisualizationLab.github.io/WordStream/
 
 ![ScreenShot](https://github.com/nnhuyen/WordStream/blob/master/images/Huffington.png)
 
