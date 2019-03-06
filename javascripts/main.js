@@ -1,10 +1,10 @@
 // pre-defined size
 var initWidth = 2000,
-    initHeight = 1000,
-    initMinFont = 14,
-    initMaxFont = 28,
-    initFlag = "none",
-    topRank;
+    initHeight = 900,
+    initMinFont = 15,
+    initMaxFont = 35,
+    initFlag = "none",// none / fa/ f / a
+    topRank, topRankUpdate;
 
 var svg = d3.select("body").append('svg')
     .attr({
@@ -13,12 +13,14 @@ var svg = d3.select("body").append('svg')
     id: "mainsvg",
 });
 
-var mainGroup, axisGroup, xGridlinesGroup, opacScale;
+var mainGroup, axisGroup, xGridlinesGroup, opacScale, legendGroup;
 
 // var fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
 //                 ,"VIS_papers","IMDB","PopCha","Cards_PC","Cards_Fries"]
 
-var fileList = ["QuantumComputing", "ACLED", "H.E.A.T.Map", "GTD", "WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel","Esquire","FactCheck","VIS_papers", "IMDB","PopCha","Cards_PC","Cards_Fries"
+var fileList = ["QuantumComputing",
+    // "ACLED", "H.E.A.T.Map", "GTD",
+    "WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel","Esquire","FactCheck","VIS_papers", "IMDB","PopCha","Cards_PC","Cards_Fries"
 ];
 
 var initialDataset = "Huffington";
@@ -127,14 +129,14 @@ function loadNewData(event) {
 function drawTimeArcs(){
     timeArcs()
 }
-async function draw(data){
+function draw(data){
     var t0 = performance.now();
     var width = initWidth  ;
     var height = initHeight;
     var font = "Arial";
     var interpolation = "cardinal";
     var bias = 200;
-    var offsetLegend = 0;
+    var offsetLegend = -10;
     var axisPadding = 10;
     var margins = {left: 20, top: 20, right: 10, bottom: 30};
     var ws = d3.layout.wordStream()
@@ -153,6 +155,7 @@ async function draw(data){
         maxSud = ws.maxSud()
     ;
     var t1 = performance.now();
+    console.log("complete");
     console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
     //Display data
     var legendFontSize = 20;
@@ -338,13 +341,15 @@ async function draw(data){
             'font-family': font,
             'font-size': function(d){return d.fontSize;},
             fill: function(d){return color(d.topicIndex);},
-            'fill-opacity': function(d){return opacity(d.sudden)},
-           //'fill-opacity': 0,
+           'fill-opacity': function(d){return opacity(d.sudden)},
+           // 'fill-opacity': 0,
             'text-anchor': 'middle',
             'alignment-baseline': 'middle',
             topic: function(d){return d.topic;},
             visibility: function(d){ return d.placed ? ("visible"): ("hidden");}
         });
+
+
 
     mainGroup.selectAll(".connection").on("mouseover", function () {
         var thisLink = d3.select(this);
@@ -516,7 +521,7 @@ async function draw(data){
     });
 
     //Build the legends
-    var legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top+offsetLegend) + ')');
+    legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height+margins.top+offsetLegend) + ')');
     var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
         .attr('transform', function(d, i){return 'translate(' + 30 + ',' + (i*legendFontSize+5) + ')';});
     legendNodes.append('circle').attr({
@@ -526,7 +531,7 @@ async function draw(data){
         stroke: 'black',
         'stroke-width': .5,
     });
-    legendNodes.append('text').text(function(d){return d;}).attr("class","value").attr({
+    legendNodes.append('text').text(function(d){return d;}).attr("class","legendValue").attr({
         'font-size': legendFontSize,
         'alignment-baseline': 'middle',
         dx: 15, dy: 3
@@ -702,8 +707,8 @@ function styleAxis(axisNodes){
     axisNodes.selectAll('.tick text').attr({
         // 'text-anchor': 'end',
         // 'transform': 'rotate(-30)',
-        'font-family': 'serif',
-        'font-size': 14
+        'font-family': 'sans-serif',
+        'font-size': 20
     });
 }
 function styleGridlineNodes(gridlineNodes){

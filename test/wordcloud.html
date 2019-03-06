@@ -24,16 +24,18 @@
         drawWordCloud(data);
     });
 
+
     function drawWordCloud(words){
+        var color = d3.scale.category10();
         var font ="Arial";
         var word_count = {};
         words.forEach(date=> {
             categories.forEach((c,i) =>{
-                date.words[c].slice(0,3).forEach(w=> word_count[w.text] = {sudden: w.sudden, category: [c,i]})})
+                date.words[c].slice(0,2).forEach(w=> word_count[w.text] = {sudden: w.sudden, category: [c,i]})})
         });
         var margin = {top: 0, right: 0, bottom: 0, left: 0};
-        var width = 1800;
-        var height = 700;
+        var width = 1400;
+        var height = 800;
         d3.select("#WordcloudImg").select('svg').remove();
         d3.select("#WordcloudImg")
             .append('svg')
@@ -74,6 +76,7 @@
             .on("end", draw)
             .start();
 
+        console.log(words);
         function draw(words) {
             d3.select(svg_location).append("svg")
                 .attr("width", width)
@@ -85,7 +88,7 @@
                 .enter().append("text")
                 .style("font-size", function(d) { return xScale(+d.value.sudden) + "px"; })
                 .style("font-family", font)
-                // .style("fill", function(d, i) { return fill(d.value.category[1]); })
+                .style("fill", function(d, i) { return fill(d.value.category[1]); })
                 .style("fill", function(d, i) { return "#000" })
                 .style("fill-opacity", function(d) { return opacity(+d.value.sudden) })
                 .attr("text-anchor", "middle")

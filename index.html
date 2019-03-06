@@ -7,6 +7,8 @@
     <link rel="shortcut icon" href="images/ws.png">
     <script src="./lib/d3.min.js"></script>
     <script src="./lib/d3.v4.min.js"></script>
+    <script src="./lib/progressbar.min.js"></script>
+    <script src="./lib/d3-queue.v3.min.js"></script>
     <script src="./lib/loaddata.js"></script>
     <script src="javascripts/quantum.js"></script>
     <script src="./lib/d3.layout.wordstream.js"></script>
@@ -28,111 +30,19 @@
     <link href="styles/jquery-ui.css" rel="stylesheet" type="text/css" />
     <script src="javascripts/saveFriesCards.js"></script>
 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <body>
 <div id="loadingSpinner">
     <!-- <span id="progressText"> -->
 </div>
-<p class="title">
+
+<div class="title ">
     WordStream: Interactive Tool for Topic Evolution
-</p>
-<svg width="360px" height="375px" class="cp" id="cp">
-    <text y="15px" font-weight="600">Control Panel</text>
-</svg>
-
-<div id="holder1"  class="dropdownList">
-    <select id="datasetsSelect" class="styled-select" onchange="loadNewData.call(this, event)"></select>
+    <a href="demo.html" class="w3-bar-item w3-button w3-mobile w3-right nav" >Demo</a>
+    <a href="index.html" class="w3-bar-item w3-button w3-mobile w3-right nav " style="background-color: #cdcdcd">Video</a>
 </div>
-
-<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script> <!-- Spinner when loading -->
-
-<script type='text/javascript' src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"> </script>
-<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css" />
-
-<!--Time arcs-->
-
-<!--✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ Slider ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿-->
-<div id="menu" class="holderCP" style="display: inline-block">
-
-    <p><span id="heightText" class="heightText textSlider"></span>
-        <img class="heightIcon icon" src="images/height.png" style="width:35px;height:35px;">
-    </p>
-    <div id="heightSlider" class="haxis slider" ></div>
-
-    <p><img class="widthIcon icon" src="images/width.png" style="width:35px;height:35px;">
-        <span id="widthText" class="widthText textSlider"></span>
-    </p>
-    <div id="widthSlider" class="waxis slider" ></div>
-
-    <p><img class="fontIcon icon" src="images/font.png" style="width:35px;height:35px;">
-        <span class="fontText textSlider">
-        <span id="fontMin"></span>,
-        <span id="fontMax"></span>
-    </span>
-    </p>
-    <div id="fontSlider" class="fontAxis slider" ></div>
-     <img class="topRankIcon icon" src="images/toprank3.png">
-
-    <p class="textSlider flow">Flow</p>
-    <img class="flow" style="left: 68px; width: 33px; height: 23px" src="images/flow.png">
-    <label class="switch flow"  style="left: 105px;">
-        <input type="checkbox" id="flow"
-               onclick="submitInput(updateData)">
-
-        <span class="toggle round"></span>
-    </label>
-
-    <p class="textSlider angleVariance">Angle Variance</p>
-    <img class="angleVariance" style="top: 302px;left: 278px;width: 32px; height: 35px" src="images/av.png">
-    <label class="switch angleVariance" style="left: 315px">
-        <input type="checkbox" id = "av"
-               onclick="submitInput(updateData)">
-        <span class="toggle round"></span>
-    </label>
-
-    <p class="textSlider rel">Relationships</p>
-    <label class="switch rel"  style="left: 315px;">
-        <input type="checkbox" id="rel"  onclick="showRelationship()">
-        <span class="toggle round"></span>
-    </label>
-    <input class="submit" onclick="submitInput(updateData)" type="button" value="Submit"><br>
-
-</div>
-
-<script src="javascripts/init.js"></script>
-<script src="javascripts/main.js"></script>
-<script>
-    d3.select("#heightText").text(initHeight);
-    d3.select("#widthText").text(initWidth);
-    d3.select("#fontMin").text(initMinFont);
-    d3.select("#fontMax").text(initMaxFont);
-</script>
-<script src="javascripts/update.js"></script>
-<script>
-    updateTopRank();
-</script>
-<!--<script src="javascripts/util.js"></script>-->
-<!--<script type='text/javascript' src="javascripts/timeArcs.js"></script>-->
-<!--<div style="display: block"></div>-->
-<!--<input type="checkbox" id="checkbox1" value="value2" class="check" onclick="update()">-->
-<!--<label for="checkbox1" >Area graph only</label>-->
-
-<!--<input id="search">-->
-<!--<button type="button" onclick="searchNode()">Search</button>-->
-
-<!--<progress value="0" max="100" id="progBar">-->
-    <!--<span id="downloadProgress">-->
-        <!--&lt;!&ndash; Your fallback goes here &ndash;&gt;-->
-    <!--</span>-->
-<!--</progress>-->
-<!--<label id="progUpdate">-->
-    <!--&lt;!&ndash; Success Message &ndash;&gt;-->
-<!--</label>-->
-<!--<br>-->
-<!--<button onclick="saveTimeArcsData()">Save data for TimeArcs</button>-->
-
-<!--<script src="javascripts/searchBox.js"></script><br>-->
-<!--Time axis goes from left to right<br>-->
-<!--Terms often appeared together in a blog are connected by a thicker link.<br>-->
+<center><iframe  width="95%" height="800" src="media/SOAViz1.mp4" frameborder="0"
+                allowfullscreen></iframe></center>
 </body>
 </html>
