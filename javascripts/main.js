@@ -1,8 +1,8 @@
 // pre-defined size
-var initWidth = 2000,
-    initHeight = 900,
-    initMinFont = 15,
-    initMaxFont = 35,
+var initWidth = 2350,
+    initHeight = 1000,
+    initMinFont = 17,
+    initMaxFont = 32,
     initFlag = "none",// none / fa/ f / a
     topRank, topRankUpdate;
 
@@ -200,7 +200,7 @@ function draw(data){
     styleGridlineNodes(gridlineNodes);
 
     //Main group
-    mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
+    mainGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + margins.top + ')').attr("id", "mainGroup");
     var wordStreamG = mainGroup.append('g');
 
     // =============== Get BOUNDARY and LAYERPATH ===============
@@ -269,7 +269,7 @@ function draw(data){
 
     if (fileName.indexOf("Huffington") >= 0) {
         d3.json("data/linksHuff2012.json", function (error, rawLinks) {
-            const threshold = 10;
+            const threshold = 5;
             const links = rawLinks.filter(d => d.weight > threshold);
 
             links.forEach(d => {
@@ -737,7 +737,7 @@ function topRank1000(){
 }
 function topRank45(){
     if (topRank==undefined){
-        topRank = 50;
+        topRank = 30;
     }
     return topRank;
 }

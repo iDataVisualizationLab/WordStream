@@ -14,7 +14,7 @@ d3.select('#widthSlider').call(d3.slider()
     .axis(axis)
     .value([0, initWidth])
     .min(0)
-    .max(2000)
+    .max(2500)
     .step(20)
     .on("slide", function (evt, value) {
         d3.select('#widthText').text(value[1]);
@@ -24,7 +24,7 @@ d3.select('#heightSlider').call(d3.slider()
     .axis(axis)
     .value([0, initHeight])
     .min(0)
-    .max(2000)
+    .max(2500)
     .step(20)
     .on("slide", function (evt, value) {
         d3.select('#heightText').text(value[1]);
@@ -113,7 +113,7 @@ function progressing() {
     bar.animate(1.0);  // Number from 0.0 to 1.0
 }
 
-function submitInput() {
+function submitInput(updateData) {
     globalWidth = parseInt(document.getElementById("widthText").innerText);
     globalHeight = parseInt(document.getElementById("heightText").innerText);
     globalMinFont = parseInt(document.getElementById("fontMin").innerText);
@@ -141,34 +141,18 @@ function submitInput() {
     }
 
     // top rank
-    if (topRankUpdate <= topRank) {
-        for (var i = 0; i < gdata.length; i++) {
-            for (var j in categories) {
-                gdata[i]["words"][categories[j]] = gdata[i]["words"][categories[j]].slice(0, topRankUpdate);
-            }
-        }
-    }
-    else {
-        for (var i = 1; i < totalData.length; i++) {        // start 1 for sudden
-            for (var j in categories) {
-                gdata[i - 1]["words"][categories[j]] = totalData[i]["words"][categories[j]].slice(0, topRankUpdate);
-            }
-        }
-        gdata = tfidf(gdata);
-    }
-    console.log("input submitted");
-    console.log(gdata);
+    var temp = getTop(totalData, topRankUpdate).slice(1);
+    var data = tfidf(temp);
 
-    // var q = d3.queue();
-    // q.defer(progressing)
-    //     .await(updateData);
-    updateData();
+    console.log("input submitted");
+    console.log(data);
+
+    updateData(data);
 }
 
 var up = [];
 
-function updateData(error) {
-    if (error) throw error;
+function updateData(data) {
     var offsetLegend = -10;
     var axisPadding = 10;
     var margins = {left: 20, top: 20, right: 10, bottom: 30};
@@ -179,7 +163,7 @@ function updateData(error) {
         .fontScale(d3.scale.log())
         .minFontSize(globalMinFont)
         .maxFontSize(globalMaxFont)
-        .data(gdata)
+        .data(data)
         .flag(globalFlag);
 
     var newboxes = ws.boxes(),
@@ -199,6 +183,7 @@ function updateData(error) {
             height: globalHeight + +margins.top + margins.bottom + axisPadding + offsetLegend + legendHeight
         });
 
+    // d3.select("#mainsvg").selectAll("*").remove();
     var dates = [];
     newboxes.data.forEach(row => {
         dates.push(row.date);
