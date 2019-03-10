@@ -1,10 +1,10 @@
 # WordStream
 
-Demo: https://iDataVisualizationLab.github.io/WordStream/
+Demo: https://iDataVisualizationLab.github.io/WordStream/demo.html
 
 
 
-Video: https://www.youtube.com/watch?v=DwaDMPhi2Ec
+Video: https://idatavisualizationlab.github.io/WordStream/
 
 [![WS](https://github.com/nnhuyen/WordStream/blob/master/images/Huffington.png)](https://www.youtube.com/watch?v=DwaDMPhi2Ec "Everything Is AWESOME")
 
