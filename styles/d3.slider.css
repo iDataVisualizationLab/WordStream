@@ -160,6 +160,8 @@
 .heightIcon {
     position: absolute;
     top: 95px;
+    width: 35px;
+    height: 35px
 }
 .haxis {
     position: absolute;
@@ -173,16 +175,20 @@
 .widthIcon {
     position: absolute;
     top: 144px;
+    width: 35px;
+    height: 35px
 
 }
 .waxis {
     position: absolute;
     top: 160px;
 }
+
 .fontIcon {
     position: absolute;
     top: 197px;
-
+    width: 35px;
+    height: 35px
 }
 .fontText {
     white-space: nowrap;
@@ -306,4 +312,10 @@ input:checked + .toggle:before {
     position: absolute;
     top: 355px;
     left: 30px;
+}
+.computeMetric {
+    z-index: 100;
+    position: absolute;
+    top: 425px;
+    left: 200px;
 }

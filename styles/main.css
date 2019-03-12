@@ -2,7 +2,34 @@ body {
     background-color: #eeeeee;
     font-family:  Arial, sans-serif;
 }
+.video {
+    top: 200px;
+    text-align: center;
+}
 
+a.button{
+    float: right;
+    padding: 10px;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+a.button.active{
+    background-color: teal;
+}
+a.button.still {
+    background-color: #bfbfbf;
+}
+a.button:hover{
+    background-color: #9e9e9e;!important;
+}
 #progressBar {
     margin: 20px;
     width: 300px;
@@ -36,9 +63,9 @@ body {
 
 .title {
     font-family: Helvetica;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: bold;
-    padding: 50px 20px 26px 35px;
+    padding: 45px 20px 18px 35px;
     position: fixed;
     background-color: white;
     top: -10px;
@@ -154,7 +181,11 @@ body {
     background-color: white;
     padding: 10px;
 }
-
+.holder1 {
+    top: 30px;
+    position: relative;
+    left: 60px;
+}
 #mainsvg{
     background-color: white;
     position:absolute;
