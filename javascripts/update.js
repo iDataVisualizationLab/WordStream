@@ -258,6 +258,7 @@ function updateData() {
 
     function drawWordsUpdate() {
         let placed = true;
+        let prevColor;
         // mainGroup.selectAll('.word').remove();
         var texts = mainGroup.select("#main").selectAll('.word').data(allWordsUpdate, d => d.id);
 
@@ -271,7 +272,7 @@ function updateData() {
                     return 'translate(' + d.x + ', ' + d.y + ')rotate(' + d.rotate + ')';
                 }
             })
-            .select(".textData")
+            .select("text")
             .style('font-size', d => d.fontSize)
             .attr({
                 visibility: function (d) {
@@ -279,22 +280,27 @@ function updateData() {
                 }
             });
 
-        texts.enter()
+        let t = texts.enter()
             .append("g")
             .attr({
                 transform: function (d) {
                     return 'translate(' + d.x + ', ' + d.y + ')rotate(' + d.rotate + ')';
                 }
             })
-            .attr("class", "word new")
+            .attr("class", "word");
+
+            t.transition()
+            .duration(1000)
+
+            t
             .append("text")
             .text(function (d) {
                 return d.text;
             })
+                .style('cursor', 'pointer')
             .style('font-size', d => d.fontSize)
             .attr({
                 "class": "textData",
-
                 fill: function (d) {
                     return color(categories.indexOf(d.topic));
                 },
@@ -309,11 +315,24 @@ function updateData() {
                 visibility: function (d) {
                     return d.placed ? (placed ? "visible" : "hidden") : (placed ? "hidden" : "visible");
                 }
-            });
+            })
+                .on('mouseenter', function(){
+                    let thisText = d3.select(this);
+                    thisText.style('cursor', 'pointer');
+                    prevColor = thisText.attr('fill');
+                    thisText.attr({
+                        stroke: prevColor,
+                        'stroke-width': 1
+                    });})
 
-        let prevColor;
-        // --- Highlight when mouse enter ---
-
+                .on('mouseout', function(){
+                let thisText = d3.select(this);
+                thisText.style('cursor', 'default');
+                thisText.attr({
+                        stroke: 'none',
+                        'stroke-width': '0'
+                    });
+                });
 
 
     }

@@ -370,13 +370,13 @@ function draw(data) {
         //Try
         let prevColor;
         //Highlight
-        mainGroup.selectAll('text').on('mouseenter', function () {
+        mainGroup.selectAll('.textData').on('mouseenter', function () {
             let thisText = d3.select(this);
             thisText.style('cursor', 'pointer');
             prevColor = thisText.attr('fill');
             let text = thisText.text();
             let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('text').filter(t => {
+            let allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && t.text === text && t.topic === topic;
             });
             allTexts.attr({
@@ -384,12 +384,12 @@ function draw(data) {
                 'stroke-width': 1
             });
         });
-        mainGroup.selectAll('text').on('mouseout', function () {
+        mainGroup.selectAll('.textData').on('mouseout', function () {
             let thisText = d3.select(this);
             thisText.style('cursor', 'default');
             let text = thisText.text();
             let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('text').filter(t => {
+            let allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && !t.cloned && t.text === text && t.topic === topic;
             });
             allTexts.attr({
@@ -398,11 +398,11 @@ function draw(data) {
             });
         });
         //Click
-        mainGroup.selectAll('text').on('click', function () {
+        mainGroup.selectAll('.textData').on('click', function () {
             let thisText = d3.select(this);
             let text = thisText.text();
             let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('text').filter(t => {
+            let allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && t.text === text && t.topic === topic;
             });
             //Select the data for the stream layers
@@ -461,14 +461,14 @@ function draw(data) {
                     wordStream: true
                 });
             //Hide all other texts
-            let allOtherTexts = mainGroup.selectAll('text').filter(t => {
+            let allOtherTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && !t.cloned && t.topic === topic;
             });
             allOtherTexts.attr('visibility', 'hidden');
         });
         topics.forEach(topic => {
             d3.select("path[topic='" + topic + "']").on('click', function () {
-                mainGroup.selectAll('text').filter(t => {
+                mainGroup.selectAll('.textData').filter(t => {
                     return t && !t.cloned && t.placed && t.topic === topic;
                 }).attr({
                     visibility: 'visible'
