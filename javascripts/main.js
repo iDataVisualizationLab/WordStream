@@ -1,15 +1,15 @@
-// let fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
+// var fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
 //                 ,"VIS_papers","IMDB","PopCha","Cards_PC","Cards_Fries"]
-let svg = d3.select("body").append('svg')
+var svg = d3.select("body").append('svg')
     .attr({
         id: "mainsvg",
         width: 1540,
         height: 658
     });
-let fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel", "Esquire", "FactCheck", "VIS_papers", "IMDB", "PopCha", "Cards_PC", "Cards_Fries", "QuantumComputing"]
+var fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel", "Esquire", "FactCheck", "VIS_papers", "IMDB", "PopCha", "Cards_PC", "Cards_Fries", "QuantumComputing"]
 
-let initialDataset = "EmptyWheel";
-let categories = ["person", "location", "organization", "miscellaneous"];
+var initialDataset = "EmptyWheel";
+var categories = ["person", "location", "organization", "miscellaneous"];
 
 var fileName;
 
@@ -17,10 +17,10 @@ var fileName;
 addDatasetsOptions();
 
 function addDatasetsOptions() {
-    let select = document.getElementById("datasetsSelect");
-    for (let i = 0; i < fileList.length; i++) {
-        let opt = fileList[i];
-        let el = document.createElement("option");
+    var select = document.getElementById("datasetsSelect");
+    for (var i = 0; i < fileList.length; i++) {
+        var opt = fileList[i];
+        var el = document.createElement("option");
         el.textContent = opt;
         el.value = opt;
         el["data-image"] = "images2/datasetThumnails/" + fileList[i] + ".png";
@@ -35,7 +35,7 @@ var spinner;
 
 function loadData() {
     // START: loader spinner settings ****************************
-    let opts = {
+    var opts = {
         lines: 25, // The number of lines to draw
         length: 15, // The length of each line
         width: 5, // The line thickness
@@ -45,7 +45,7 @@ function loadData() {
         trail: 50, // Afterglow percentage
         className: 'spinner', // The CSS class to assign to the spinner
     };
-    let target = document.getElementById('loadingSpinner');
+    var target = document.getElementById('loadingSpinner');
     spinner = new Spinner(opts).spin(target);
     // END: loader spinner settings ****************************
     fileName = "data/" + fileName + ".tsv"; // Add data folder path
@@ -89,12 +89,12 @@ function loadNewData(event) {
 
 function draw(data) {
     //Layout data
-    let width = globalWidth, height = globalHeight;
-    let font = "Arial";
-    let interpolation = "cardinal";
-    let axisPadding = 10;
-    let margins = {left: 20, top: 20, right: 10, bottom: 30};
-    let ws = d3.layout.wordStream()
+    var width = globalWidth, height = globalHeight;
+    var font = "Arial";
+    var interpolation = "cardinal";
+    var axisPadding = 10;
+    var margins = {left: 20, top: 20, right: 10, bottom: 30};
+    var ws = d3.layout.wordStream()
         .size([width, height])
         .interpolate(interpolation)
         .fontScale(d3.scale.linear())
@@ -103,14 +103,14 @@ function draw(data) {
         .data(data)
         .flag(globalFlag)
         .font(font);
-    let boxes = ws.boxes();
-    let minSud = ws.minSud();
-    let maxSud = ws.maxSud();
+    var boxes = ws.boxes();
+    var minSud = ws.minSud();
+    var maxSud = ws.maxSud();
     maxFreq = ws.maxFreq();
 
     //Display data
-    let legendFontSize = 12;
-    let legendHeight = boxes.topics.length * legendFontSize;
+    var legendFontSize = 12;
+    var legendHeight = boxes.topics.length * legendFontSize;
 
     //set svg data.
     svg.attr({
@@ -118,7 +118,7 @@ function draw(data) {
         height: globalHeight + +margins.top + margins.bottom + axisPadding + legendHeight
     });
 
-    let area = d3.svg.area()
+    var area = d3.svg.area()
         .interpolate(interpolation)
         .x(function (d) {
             return (d.x);
@@ -131,25 +131,25 @@ function draw(data) {
         });
 
     //Display time axes
-    let dates = [];
+    var dates = [];
     boxes.data.forEach(row => {
         dates.push(row.date);
     });
 
-    let xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
-    let xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
+    var xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
+    var xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
     axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height + margins.top + axisPadding + legendHeight) + ')');
-    let axisNodes = axisGroup.call(xAxis);
+    var axisNodes = axisGroup.call(xAxis);
     styleAxis(axisNodes);
     //Display the vertical gridline
-    let xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length + 1)).rangeBands([0, width + width / boxes.data.length]);
-    let xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
+    var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length + 1)).rangeBands([0, width + width / boxes.data.length]);
+    var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
     xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left - width / boxes.data.length / 2) + ',' + (height + margins.top + axisPadding + legendHeight + margins.bottom) + ')');
-    let gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height - axisPadding - legendHeight - margins.bottom, 0, 0).tickFormat(''));
+    var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height - axisPadding - legendHeight - margins.bottom, 0, 0).tickFormat(''));
     styleGridlineNodes(gridlineNodes);
     //Main group
     mainGroup = svg.append('g').attr("id", "main").attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
-    let wordStreamG = mainGroup.append('g').attr("id", "wordStreamG");
+    var wordStreamG = mainGroup.append('g').attr("id", "wordStreamG");
 
 // =============== Get BOUNDARY and LAYERPATH ===============
     const lineCardinal = d3.svg.line()
@@ -161,31 +161,31 @@ function draw(data) {
         })
         .interpolate("cardinal");
 
-    let boundary = [];
-    for (let i = 0; i < boxes.layers[0].length; i++) {
-        let tempPoint = Object.assign({}, boxes.layers[0][i]);
+    var boundary = [];
+    for (var i = 0; i < boxes.layers[0].length; i++) {
+        var tempPoint = Object.assign({}, boxes.layers[0][i]);
         tempPoint.y = tempPoint.y0;
         boundary.push(tempPoint);
     }
 
-    for (let i = boxes.layers[boxes.layers.length - 1].length - 1; i >= 0; i--) {
-        let tempPoint2 = Object.assign({}, boxes.layers[boxes.layers.length - 1][i]);
+    for (var i = boxes.layers[boxes.layers.length - 1].length - 1; i >= 0; i--) {
+        var tempPoint2 = Object.assign({}, boxes.layers[boxes.layers.length - 1][i]);
         tempPoint2.y = tempPoint2.y + tempPoint2.y0;
         boundary.push(tempPoint2);
     }       // Add next (8) elements
 
-    let lenb = boundary.length;
+    var lenb = boundary.length;
 
     // Get the string for path
 
-    let combined = lineCardinal(boundary.slice(0, lenb / 2))
+    var combined = lineCardinal(boundary.slice(0, lenb / 2))
         + "L"
         + lineCardinal(boundary.slice(lenb / 2, lenb))
             .substring(1, lineCardinal(boundary.slice(lenb / 2, lenb)).length)
         + "Z";
 
     // draw curves
-    let topics = boxes.topics;
+    var topics = boxes.topics;
     mainGroup.selectAll('path')
         .data(boxes.layers)
         .enter()
@@ -213,23 +213,23 @@ function draw(data) {
             'stroke-opacity': 0,
         });
 
-    let allWords = [];
+    var allWords = [];
     d3.map(boxes.data, function (row) {
         boxes.topics.forEach(topic => {
             allWords = allWords.concat(row.words[topic]);
         });
     });
     allW = JSON.parse(JSON.stringify(allWords));
-    let c20 = d3.scale.category20b();
+    var c20 = d3.scale.category20b();
     //Color based on the topic
-    let topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
+    var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
     //Color based on term
-    let terms = [];
+    var terms = [];
     for (i = 0; i < allWords.length; i++) {
         terms.concat(allWords[i].text);
     }
-    let uniqueTerms = d3.set(terms).values();
-    let termColorMap = d3.scale.ordinal()
+    var uniqueTerms = d3.set(terms).values();
+    var termColorMap = d3.scale.ordinal()
         .domain(uniqueTerms)
         .range(c20.range());
     opacity = d3.scale.log()
@@ -245,12 +245,12 @@ function draw(data) {
                 d.sourceID = d.sourceID.split(".").join("_").split(" ").join("_");
                 d.targetID = d.targetID.split(".").join("_").split(" ").join("_");
             });
-            let visibleLinks = [];
+            var visibleLinks = [];
 
             // select only links with: word place = true and have same id
             links.forEach(d => {
-                let s = allWords.find(w => (w.id === d.sourceID) && (w.placed === true));
-                let t = allWords.find(w => (w.id === d.targetID) && (w.placed === true));
+                var s = allWords.find(w => (w.id === d.sourceID) && (w.placed === true));
+                var t = allWords.find(w => (w.id === d.targetID) && (w.placed === true));
                 if ((s !== undefined) && (t !== undefined)) {
                     d.sourceX = s.x;
                     d.sourceY = s.y;
@@ -291,7 +291,7 @@ function draw(data) {
 
     function drawWords() {
 
-        let placed = true;
+        var placed = true;
         mainGroup.selectAll('.word').data(allWords).enter().append('g')
             .attr({
                 transform: function (d) {
@@ -370,15 +370,15 @@ function draw(data) {
         // });
 
         //Try
-        let prevColor;
+        var prevColor;
         //Highlight
         mainGroup.selectAll('.textData').on('mouseenter', function () {
-            let thisText = d3.select(this);
+            var thisText = d3.select(this);
             thisText.style('cursor', 'pointer');
             prevColor = thisText.attr('fill');
-            let text = thisText.text();
-            let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('.textData').filter(t => {
+            var text = thisText.text();
+            var topic = thisText.attr('topic');
+            var allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && t.text === text && t.topic === topic;
             });
             allTexts.attr({
@@ -387,11 +387,11 @@ function draw(data) {
             });
         });
         mainGroup.selectAll('.textData').on('mouseout', function () {
-            let thisText = d3.select(this);
+            var thisText = d3.select(this);
             thisText.style('cursor', 'default');
-            let text = thisText.text();
-            let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('.textData').filter(t => {
+            var text = thisText.text();
+            var topic = thisText.attr('topic');
+            var allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && !t.cloned && t.text === text && t.topic === topic;
             });
             allTexts.attr({
@@ -401,16 +401,16 @@ function draw(data) {
         });
         //Click
         mainGroup.selectAll('.textData').on('click', function () {
-            let thisText = d3.select(this);
-            let text = thisText.text();
-            let topic = thisText.attr('topic');
-            let allTexts = mainGroup.selectAll('.textData').filter(t => {
+            var thisText = d3.select(this);
+            var text = thisText.text();
+            var topic = thisText.attr('topic');
+            var allTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && t.text === text && t.topic === topic;
             });
             //Select the data for the stream layers
-            let streamLayer = d3.select("path[topic='" + topic + "']")[0][0].__data__;
+            var streamLayer = d3.select("path[topic='" + topic + "']")[0][0].__data__;
             //Push all points
-            let points = Array();
+            var points = Array();
             //Initialize all points
             streamLayer.forEach(elm => {
                 points.push({
@@ -420,21 +420,21 @@ function draw(data) {
                 });
             });
             allTexts[0].forEach(t => {
-                let data = t.__data__;
-                let fontSize = data.fontSize;
+                var data = t.__data__;
+                var fontSize = data.fontSize;
                 //The point
-                let thePoint = points[data.timeStep + 1];
+                var thePoint = points[data.timeStep + 1];
                 ;//+1 since we added 1 to the first point and 1 to the last point.
                 thePoint.y = -data.streamHeight;
                 //Set it to visible.
                 //Clone the nodes.
-                let clonedNode = t.cloneNode(true);
+                var clonedNode = t.cloneNode(true);
                 d3.select(clonedNode).attr({
                     visibility: "visible",
                     stroke: 'none',
                     'stroke-size': 0,
                 });
-                let clonedParentNode = t.parentNode.cloneNode(false);
+                var clonedParentNode = t.parentNode.cloneNode(false);
                 clonedParentNode.appendChild(clonedNode);
 
                 t.parentNode.parentNode.appendChild(clonedParentNode);
@@ -463,7 +463,7 @@ function draw(data) {
                     wordStream: true
                 });
             //Hide all other texts
-            let allOtherTexts = mainGroup.selectAll('.textData').filter(t => {
+            var allOtherTexts = mainGroup.selectAll('.textData').filter(t => {
                 return t && !t.cloned && t.topic === topic;
             });
             allOtherTexts.attr('visibility', 'hidden');
@@ -489,7 +489,7 @@ function draw(data) {
 
         //Build the legends
         legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height + margins.top) + ')');
-        let legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
+        var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
             .attr('transform', function (d, i) {
                 return 'translate(' + 10 + ',' + (i * legendFontSize) + ')';
             });

@@ -1,5 +1,5 @@
 function showRelationship() {
-    let isRel = document.getElementById("rel").checked;
+    var isRel = document.getElementById("rel").checked;
     console.log(isRel);
     if (isRel) {
         d3.selectAll(".connection").transition().duration(200).attr("opacity", 1);
@@ -7,7 +7,7 @@ function showRelationship() {
     else d3.selectAll(".connection").transition().duration(200).attr("opacity", 0);
 }
 function getTfidf() {
-    let tfidfed = tfidf(allW);
+    var tfidfed = tfidf(allW);
     var sumTfidfDisplayed = 0;
     var sumTfidf = 0;
 
@@ -19,15 +19,15 @@ function getTfidf() {
     });
     return sumTfidfDisplayed/sumTfidf;
 }
-let allWordsUpdate;
+var allWordsUpdate;
 function submitInput(updateData) {
     globalWidth = parseInt(document.getElementById("widthText").innerText);
     globalHeight = parseInt(document.getElementById("heightText").innerText);
     globalMinFont = parseInt(document.getElementById("fontMin").innerText);
     globalMaxFont = parseInt(document.getElementById("fontMax").innerText);
     globalTop = parseInt(document.getElementById("topRankText").innerText);
-    let isFlow = document.getElementById("flow").checked;
-    let isAv = document.getElementById("av").checked;
+    var isFlow = document.getElementById("flow").checked;
+    var isAv = document.getElementById("av").checked;
     if (isFlow && isAv) {
         console.log("Flow and Av");
         globalFlag = "fa";
@@ -48,17 +48,17 @@ function submitInput(updateData) {
     }
 
     // top rank
-    let data = JSON.parse(JSON.stringify(totalData));
+    var data = JSON.parse(JSON.stringify(totalData));
     globalData = getTop(data, categories, globalTop);
     updateData(globalData);
 }
 
 function updateData() {
-    let font = "Arial";
-    let interpolation = "cardinal";
-    let axisPadding = 10;
-    let margins = {left: 20, top: 20, right: 10, bottom: 30};
-    let ws = d3.layout.wordStream()
+    var font = "Arial";
+    var interpolation = "cardinal";
+    var axisPadding = 10;
+    var margins = {left: 20, top: 20, right: 10, bottom: 30};
+    var ws = d3.layout.wordStream()
         .size([globalWidth, globalHeight])
         .interpolate(interpolation)
         .fontScale(d3.scale.linear())
@@ -68,10 +68,10 @@ function updateData() {
         .data(globalData)
         .font(font);
     const newboxes = ws.boxes();
-    let minSud = ws.minSud();
-    let maxSud = ws.maxSud();
+    var minSud = ws.minSud();
+    var maxSud = ws.maxSud();
     const legendFontSize = 12;
-    let legendHeight = newboxes.topics.length * legendFontSize;
+    var legendHeight = newboxes.topics.length * legendFontSize;
 
     mainGroup = d3.select("#mainsvg");
 
@@ -113,7 +113,7 @@ function updateData() {
     // build legend
     legendGroup.attr('transform', 'translate(' + margins.left + ',' + (globalHeight + margins.top) + ')');
 
-    let area = d3.svg.area()
+    var area = d3.svg.area()
         .interpolate(interpolation)
         .x(function (d) {
             return (d.x);
@@ -134,31 +134,31 @@ function updateData() {
         })
         .interpolate("cardinal");
 
-    let boundary = [];
-    for (let i = 0; i < newboxes.layers[0].length; i++) {
-        let tempPoint = Object.assign({}, newboxes.layers[0][i]);
+    var boundary = [];
+    for (var i = 0; i < newboxes.layers[0].length; i++) {
+        var tempPoint = Object.assign({}, newboxes.layers[0][i]);
         tempPoint.y = tempPoint.y0;
         boundary.push(tempPoint);
     }
 
-    for (let i = newboxes.layers[newboxes.layers.length - 1].length - 1; i >= 0; i--) {
-        let tempPoint2 = Object.assign({}, newboxes.layers[newboxes.layers.length - 1][i]);
+    for (var i = newboxes.layers[newboxes.layers.length - 1].length - 1; i >= 0; i--) {
+        var tempPoint2 = Object.assign({}, newboxes.layers[newboxes.layers.length - 1][i]);
         tempPoint2.y = tempPoint2.y + tempPoint2.y0;
         boundary.push(tempPoint2);
     }       // Add next (8) elements
 
-    let lenb = boundary.length;
+    var lenb = boundary.length;
 
     // Get the string for path
 
-    let combined = lineCardinal(boundary.slice(0, lenb / 2))
+    var combined = lineCardinal(boundary.slice(0, lenb / 2))
         + "L"
         + lineCardinal(boundary.slice(lenb / 2, lenb))
             .substring(1, lineCardinal(boundary.slice(lenb / 2, lenb)).length)
         + "Z";
 
     // draw curves
-    let topics = newboxes.topics;
+    var topics = newboxes.topics;
     mainGroup.selectAll(".curve")
         .data(newboxes.layers)
         .attr("d", area)
@@ -199,12 +199,12 @@ function updateData() {
                 d.sourceID = d.sourceID.split(".").join("_").split(" ").join("_");
                 d.targetID = d.targetID.split(".").join("_").split(" ").join("_");
             });
-            let visibleLinks = [];
+            var visibleLinks = [];
 
             // select only links with: word place = true and have same id
             links.forEach(d => {
-                let s = allWordsUpdate.find(w => (w.id === d.sourceID) && (w.placed === true));
-                let t = allWordsUpdate.find(w => (w.id === d.targetID) && (w.placed === true));
+                var s = allWordsUpdate.find(w => (w.id === d.sourceID) && (w.placed === true));
+                var t = allWordsUpdate.find(w => (w.id === d.targetID) && (w.placed === true));
                 if ((s !== undefined) && (t !== undefined)) {
                     d.sourceX = s.x;
                     d.sourceY = s.y;
@@ -222,7 +222,7 @@ function updateData() {
                 .domain(d3.extent(visibleLinks, d => d.weight))
                 .range([0.5, 1]);
 
-            let conn = mainGroup.selectAll(".connection").data(visibleLinks);
+            var conn = mainGroup.selectAll(".connection").data(visibleLinks);
 
             conn.exit().remove();
             conn.attr("class", "connection")
@@ -257,8 +257,8 @@ function updateData() {
     else drawWordsUpdate();
 
     function drawWordsUpdate() {
-        let placed = true;
-        let prevColor;
+        var placed = true;
+        var prevColor;
         // mainGroup.selectAll('.word').remove();
         var texts = mainGroup.select("#main").selectAll('.word').data(allWordsUpdate, d => d.id);
 
@@ -280,7 +280,7 @@ function updateData() {
                 }
             });
 
-        let t = texts.enter()
+        var t = texts.enter()
             .append("g")
             .attr({
                 transform: function (d) {
@@ -317,7 +317,7 @@ function updateData() {
                 }
             })
                 .on('mouseenter', function(){
-                    let thisText = d3.select(this);
+                    var thisText = d3.select(this);
                     thisText.style('cursor', 'pointer');
                     prevColor = thisText.attr('fill');
                     thisText.attr({
@@ -326,7 +326,7 @@ function updateData() {
                     });})
 
                 .on('mouseout', function(){
-                let thisText = d3.select(this);
+                var thisText = d3.select(this);
                 thisText.style('cursor', 'default');
                 thisText.attr({
                         stroke: 'none',

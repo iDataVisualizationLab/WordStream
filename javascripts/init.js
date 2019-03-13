@@ -4,9 +4,9 @@ const initWidth = 1500,
     initMaxFont = 36,
     initFlag = "none";// none / fa/ f / a
 
-let initTop = 15;
+var initTop = 15;
 
-let globalWidth = initWidth,
+var globalWidth = initWidth,
     globalHeight = initHeight,
     globalMinFont = initMinFont,
     globalMaxFont = initMaxFont,
@@ -14,9 +14,9 @@ let globalWidth = initWidth,
     globalTop = initTop,
     globalData;
 
-let allW;
+var allW;
 
-let mainGroup, axisGroup, xGridlinesGroup, opacScale, legendGroup, opacity, layerPath, maxFreq;
+var mainGroup, axisGroup, xGridlinesGroup, opacScale, legendGroup, opacity, layerPath, maxFreq;
 
 const color = d3.scale.category10();
 const axis = d3.svg.axis().ticks(4);
@@ -60,7 +60,7 @@ d3.select('#topRankSlider').call(d3.slider()
 const metricName = [["Importance value (tf-idf ratio) "],["Compactness "],["All Words Area/Stream Area"],
     ["Weighted Display Rate"],["Average Normalized Frequency "]];
 
-let metric = d3.select("body").append("svg")
+var metric = d3.select("body").append("svg")
     .attr("width",360)
     .attr("height", 250)
     .attr("class","metricSVG")
@@ -87,7 +87,7 @@ d3.select("body")
     .text(function(d){return d;})
     .style("font-size", "13px");
 
-let metric2 = d3.select("body").append("svg")
+var metric2 = d3.select("body").append("svg")
     .attr("width",100)
     .attr("height", 300)
     .attr("class","metricSVG2")
