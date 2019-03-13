@@ -316,6 +316,6 @@ input:checked + .toggle:before {
 .computeMetric {
     z-index: 100;
     position: absolute;
-    top: 425px;
+    top: 424px;
     left: 200px;
 }

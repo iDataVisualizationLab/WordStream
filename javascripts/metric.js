@@ -83,7 +83,6 @@ function getDisplayRate(allW, maxFreq){
     var weightedRate = displayFreq_1 / totalFreq_1;
     var averageNormFreq = displayNormFreq_2 / numbers_2;
 
-    console.log([weightedRate, averageNormFreq]);
     return [weightedRate, averageNormFreq]
 }
 // path:      an SVG <path> element

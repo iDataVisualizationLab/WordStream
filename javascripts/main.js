@@ -1,11 +1,11 @@
-let svg = d3.select("body").append('svg').attr({
-    width: globalWidth,
-    height: globalHeight,
-    id: "mainsvg"
-});
 // let fileList = ["WikiNews","Huffington","CrooksAndLiars","EmptyWheel","Esquire","FactCheck"
 //                 ,"VIS_papers","IMDB","PopCha","Cards_PC","Cards_Fries"]
-
+let svg = d3.select("body").append('svg')
+    .attr({
+        id: "mainsvg",
+        width: 1540,
+        height: 658
+    });
 let fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel", "Esquire", "FactCheck", "VIS_papers", "IMDB", "PopCha", "Cards_PC", "Cards_Fries", "QuantumComputing"]
 
 let initialDataset = "EmptyWheel";
@@ -101,6 +101,7 @@ function draw(data) {
         .minFontSize(initMinFont)
         .maxFontSize(initMaxFont)
         .data(data)
+        .flag(globalFlag)
         .font(font);
     let boxes = ws.boxes();
     let minSud = ws.minSud();
@@ -110,10 +111,11 @@ function draw(data) {
     //Display data
     let legendFontSize = 12;
     let legendHeight = boxes.topics.length * legendFontSize;
+
     //set svg data.
     svg.attr({
-        width: width + margins.left + margins.top,
-        height: height + margins.top + margins.bottom + axisPadding + legendHeight
+        width: globalWidth + margins.left + margins.top,
+        height: globalHeight + +margins.top + margins.bottom + axisPadding + legendHeight
     });
 
     let area = d3.svg.area()

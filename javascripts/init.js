@@ -1,5 +1,5 @@
 const initWidth = 1500,
-    initHeight = 520,
+    initHeight = 550,
     initMinFont = 14,
     initMaxFont = 36,
     initFlag = "none";// none / fa/ f / a

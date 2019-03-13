@@ -70,7 +70,7 @@ function updateData() {
     const newboxes = ws.boxes();
     let minSud = ws.minSud();
     let maxSud = ws.maxSud();
-    const legendFontSize = 20;
+    const legendFontSize = 12;
     let legendHeight = newboxes.topics.length * legendFontSize;
 
     mainGroup = d3.select("#mainsvg");
