@@ -1,7 +1,7 @@
-const initWidth = 1500,
-    initHeight = 550,
-    initMinFont = 14,
-    initMaxFont = 36,
+const initWidth = 1400,
+    initHeight = 660,
+    initMinFont = 15,
+    initMaxFont = 35,
     initFlag = "none";// none / fa/ f / a
 
 var initTop = 15;
@@ -12,11 +12,11 @@ var globalWidth = initWidth,
     globalMaxFont = initMaxFont,
     globalFlag = initFlag,
     globalTop = initTop,
-    globalData;
+    globalData,
+    isRel = document.getElementById("rel").checked;
 
 var allW;
 
-var mainGroup, axisGroup, xGridlinesGroup, opacScale, legendGroup, opacity, layerPath, maxFreq;
 
 const color = d3.scale.category10();
 const axis = d3.svg.axis().ticks(4);

@@ -47,7 +47,7 @@
 <link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
 
 <!--✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ Slider ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿-->
-<svg width="360px" height="375px" class="cp" id="cp">
+<svg width="360px" height="377px" class="cp" id="cp">
     <text y="15px" font-weight="600">Control Panel</text>
 </svg>
 <div id="menu" class="holderCP" style="display: inline-block">
@@ -82,7 +82,7 @@
     <img class="flow" style="left: 68px; width: 33px; height: 23px" src="images/flow.png">
     <label class="switch flow" style="left: 105px;">
         <input type="checkbox" id="flow"
-               onclick="submitInput(updateData)">
+               onclick="submitInput(draw)">
 
         <span class="toggle round"></span>
     </label>
@@ -91,7 +91,7 @@
     <img class="angleVariance" style="top: 302px;left: 278px;width: 32px; height: 35px" src="images/av.png">
     <label class="switch angleVariance" style="left: 315px">
         <input type="checkbox" id="av"
-               onclick="submitInput(updateData)">
+               onclick="submitInput(draw)">
         <span class="toggle round"></span>
     </label>
 
@@ -100,7 +100,7 @@
         <input type="checkbox" id="rel" onclick="showRelationship()">
         <span class="toggle round"></span>
     </label>
-    <input class="submit" onclick="submitInput(updateData)" type="button" value="Submit"><br>
+    <input class="submit" onclick="submitInput(draw)" type="button" value="Submit"><br>
     <input class="computeMetric" onclick="computeMetric()" type="button" value="Compute measurements"><br>
 </div>
 <script src="./javascripts/init.js"></script>

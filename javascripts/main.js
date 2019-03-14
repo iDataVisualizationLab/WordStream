@@ -3,8 +3,8 @@
 var svg = d3.select("body").append('svg')
     .attr({
         id: "mainsvg",
-        width: 1540,
-        height: 658
+        width: 1400,
+        height: 660
     });
 var fileList = ["WikiNews", "Huffington", "CrooksAndLiars", "EmptyWheel", "Esquire", "FactCheck", "VIS_papers", "IMDB", "PopCha", "Cards_PC", "Cards_Fries", "QuantumComputing"]
 
@@ -13,6 +13,12 @@ var categories = ["person", "location", "organization", "miscellaneous"];
 
 var fileName;
 
+var opacity, layerPath, maxFreq;
+
+var axisGroup = svg.append('g').attr("id", "axisGroup");
+var xGridlinesGroup = svg.append('g').attr("id", "xGridlinesGroup");
+var mainGroup = svg.append('g').attr("id", "main");
+var legendGroup = svg.append('g').attr("id", "legend");
 
 addDatasetsOptions();
 
@@ -66,7 +72,7 @@ function loadData() {
         loadAuthorData(draw, initTop);
     }
     else if (fileName.indexOf("VIS") >= 0) {
-        categories = categories = ["Vis", "VAST", "InfoVis", "SciVis"];
+        categories = ["Vis", "VAST", "InfoVis", "SciVis"];
         loadAuthorData(draw, initTop);
     }
     else if (fileName.indexOf("QuantumComputing") >= 0) {
@@ -75,6 +81,11 @@ function loadData() {
         initTop = 15;
         loadQuantumComputing(draw, initTop);
     }
+    else if (fileName.indexOf("Huffington") >= 0) {
+        categories = ["person", "location", "organization", "miscellaneous"];
+        loadBlogPostData(draw, initTop);
+        document.getElementById("rel").checked = true;
+    }
     else {
         categories = ["person", "location", "organization", "miscellaneous"];
         loadBlogPostData(draw, initTop);
@@ -82,41 +93,52 @@ function loadData() {
 }
 
 function loadNewData(event) {
-    svg.selectAll("*").remove();
+    legendGroup.selectAll("*").remove();
+    axisGroup.selectAll("*").remove();
+    xGridlinesGroup.selectAll("*").remove();
+    mainGroup.selectAll("*").remove();
+
     fileName = this.options[this.selectedIndex].text;
+    document.getElementById("rel").checked = false;
     loadData();
 }
 
 function draw(data) {
     //Layout data
-    var width = globalWidth, height = globalHeight;
     var font = "Arial";
     var interpolation = "cardinal";
-    var axisPadding = 10;
-    var margins = {left: 20, top: 20, right: 10, bottom: 30};
+    const axisPadding = 10;
+    const legendFontSize = 12;
+    const legendOffset = 10;
+    var legendHeight = categories.length * legendFontSize;
+
+    const margins = {left: 20, top: 20, right: 10, bottom: 30};
+    var width = globalWidth - (margins.left + margins.top);
+    var height = globalHeight - (+margins.top + margins.bottom + axisPadding + legendHeight);
     var ws = d3.layout.wordStream()
-        .size([width, height])
-        .interpolate(interpolation)
-        .fontScale(d3.scale.linear())
-        .minFontSize(initMinFont)
-        .maxFontSize(initMaxFont)
-        .data(data)
-        .flag(globalFlag)
-        .font(font);
+            .size([width, height])
+            .fontScale(d3.scale.linear())
+            .minFontSize(globalMinFont)
+            .maxFontSize(globalMaxFont)
+            .data(data)
+            .flag(globalFlag)
+        // .font(font)
+        // .interpolate(interpolation)
+        // .fontScale(d3.scale.linear())
+    ;
     var boxes = ws.boxes();
     var minSud = ws.minSud();
     var maxSud = ws.maxSud();
     maxFreq = ws.maxFreq();
 
-    //Display data
-    var legendFontSize = 12;
-    var legendHeight = boxes.topics.length * legendFontSize;
-
     //set svg data.
-    svg.attr({
-        width: globalWidth + margins.left + margins.top,
-        height: globalHeight + +margins.top + margins.bottom + axisPadding + legendHeight
-    });
+    svg
+        .transition()
+        .duration(300)
+        .attr({
+            width: globalWidth,
+            height: globalHeight,
+        });
 
     var area = d3.svg.area()
         .interpolate(interpolation)
@@ -138,17 +160,21 @@ function draw(data) {
 
     var xAxisScale = d3.scale.ordinal().domain(dates).rangeBands([0, width]);
     var xAxis = d3.svg.axis().orient('bottom').scale(xAxisScale);
-    axisGroup = svg.append('g').attr('transform', 'translate(' + (margins.left) + ',' + (height + margins.top + axisPadding + legendHeight) + ')');
+
+    axisGroup.attr('transform', 'translate(' + (margins.left) + ',' + (height + margins.top + axisPadding + legendHeight) + ')');
     var axisNodes = axisGroup.call(xAxis);
     styleAxis(axisNodes);
+
     //Display the vertical gridline
     var xGridlineScale = d3.scale.ordinal().domain(d3.range(0, dates.length + 1)).rangeBands([0, width + width / boxes.data.length]);
     var xGridlinesAxis = d3.svg.axis().orient('bottom').scale(xGridlineScale);
-    xGridlinesGroup = svg.append('g').attr('transform', 'translate(' + (margins.left - width / boxes.data.length / 2) + ',' + (height + margins.top + axisPadding + legendHeight + margins.bottom) + ')');
+
+    xGridlinesGroup.attr('transform', 'translate(' + (margins.left - width / boxes.data.length / 2) + ',' + (height + margins.top + axisPadding + legendHeight + margins.bottom) + ')');
     var gridlineNodes = xGridlinesGroup.call(xGridlinesAxis.tickSize(-height - axisPadding - legendHeight - margins.bottom, 0, 0).tickFormat(''));
     styleGridlineNodes(gridlineNodes);
+
     //Main group
-    mainGroup = svg.append('g').attr("id", "main").attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
+    mainGroup.attr('transform', 'translate(' + margins.left + ',' + margins.top + ')');
     var wordStreamG = mainGroup.append('g').attr("id", "wordStreamG");
 
 // =============== Get BOUNDARY and LAYERPATH ===============
@@ -186,9 +212,12 @@ function draw(data) {
 
     // draw curves
     var topics = boxes.topics;
-    mainGroup.selectAll('path')
-        .data(boxes.layers)
-        .enter()
+
+    var curve = mainGroup.selectAll('.curve').data(boxes.layers);
+
+    curve.exit().remove();
+
+    curve.enter()
         .append('path')
         .attr('d', area)
         .style('fill', function (d, i) {
@@ -203,6 +232,20 @@ function draw(data) {
                 return topics[i];
             }
         });
+
+    curve.attr("d", area)
+        .style('fill', function (d, i) {
+            return color(i);
+        })
+        .attr({
+            'fill-opacity': 0,
+            stroke: 'black',
+            'stroke-width': 0,
+            topic: function (d, i) {
+                return topics[i];
+            }
+        });
+
 
     // ============= Get LAYER PATH ==============
 
@@ -219,48 +262,44 @@ function draw(data) {
             allWords = allWords.concat(row.words[topic]);
         });
     });
+
     allW = JSON.parse(JSON.stringify(allWords));
-    var c20 = d3.scale.category20b();
-    //Color based on the topic
-    var topicColorMap = d3.scale.ordinal().domain(topics).range(c20.range());
-    //Color based on term
-    var terms = [];
-    for (i = 0; i < allWords.length; i++) {
-        terms.concat(allWords[i].text);
-    }
-    var uniqueTerms = d3.set(terms).values();
-    var termColorMap = d3.scale.ordinal()
-        .domain(uniqueTerms)
-        .range(c20.range());
+
     opacity = d3.scale.log()
         .domain([minSud, maxSud])
         .range([0.4, 1]);
 
+    var lineScale;
     if (fileName.indexOf("Huffington") >= 0) {
         d3.json("data/linksHuff2012.json", function (error, rawLinks) {
             const threshold = 5;
             const links = rawLinks.filter(d => d.weight > threshold);
+            var isRel = document.getElementById("rel").checked;
 
             links.forEach(d => {
                 d.sourceID = d.sourceID.split(".").join("_").split(" ").join("_");
                 d.targetID = d.targetID.split(".").join("_").split(" ").join("_");
             });
-            var visibleLinks = [];
+            let visibleLinks = [];
 
             // select only links with: word place = true and have same id
             links.forEach(d => {
-                var s = allWords.find(w => (w.id === d.sourceID) && (w.placed === true));
-                var t = allWords.find(w => (w.id === d.targetID) && (w.placed === true));
+                let s = allWords.find(w => (w.id === d.sourceID) && (w.placed === true));
+                let t = allWords.find(w => (w.id === d.targetID) && (w.placed === true));
                 if ((s !== undefined) && (t !== undefined)) {
-                    d.sourceX = s.x;
-                    d.sourceY = s.y;
-                    d.targetX = t.x;
-                    d.targetY = t.y;
-                    visibleLinks.push(d);
+                    visibleLinks.push({
+                        sourceX: s.x,
+                        sourceY: s.y,
+                        targetX: t.x,
+                        targetY: t.y,
+                        weight: d.weight,
+                        sourceID: d.sourceID,
+                        targetID: d.targetID,
+                    });
                 }
             });
 
-            const lineScale = d3.scale.linear()
+            lineScale = d3.scale.linear()
                 .domain(d3.extent(visibleLinks, d => d.weight))
                 .range([0.5, 3]);
 
@@ -268,12 +307,15 @@ function draw(data) {
                 .domain(d3.extent(visibleLinks, d => d.weight))
                 .range([0.5, 1]);
 
-            mainGroup.selectAll(".connection")
-                .data(visibleLinks)
-                .enter()
+            var connection = mainGroup.selectAll(".connection").data(visibleLinks);
+            connection.exit().remove();
+
+            connection.enter()
                 .append("line")
-                .attr("class", "connection")
-                .attr("opacity", 1)
+                .attr("class", "connection");
+
+            connection
+                .attr("opacity", isRel ? 1 : 0)
                 .attr({
                     "x1": d => d.sourceX,
                     "y1": d => d.sourceY,
@@ -283,36 +325,44 @@ function draw(data) {
                     "stroke-opacity": d => opacScale(d.weight),
                     "stroke-width": d => lineScale(d.weight)
                 });
-
             drawWords();
         });
-    }
-    else drawWords();
+    } else drawWords();
 
     function drawWords() {
-
         var placed = true;
-        mainGroup.selectAll('.word').data(allWords).enter().append('g')
+        var prevColor;
+
+        var texts = mainGroup.selectAll('.word').data(allWords, d => d.id);
+
+        texts.exit().remove();
+
+        var textEnter = texts.enter().append('g')
             .attr({
                 transform: function (d) {
                     return 'translate(' + d.x + ', ' + d.y + ')rotate(' + d.rotate + ')';
                 }
             })
             .attr("class", "word")
-            .append('text')
+
+        textEnter.transition()
+            .duration(800)
+
+        textEnter.append('text')
             .text(function (d) {
                 return d.text;
             })
             .attr({
+                "id": d => d.id,
                 "class": "textData",
                 'font-family': font,
                 'font-size': function (d) {
                     return d.fontSize;
                 },
-                fill: function (d, i) {
+                "fill": function (d, i) {
                     return color(categories.indexOf(d.topic));
                 },
-                "opacity": function (d) {
+                "fill-opacity": function (d) {
                     return opacity(d.sudden);
                 },
                 'text-anchor': 'middle',
@@ -321,56 +371,71 @@ function draw(data) {
                     return d.topic;
                 },
                 visibility: function (d) {
-                    return d.placed ? (placed ? "visible" : "hidden") : (placed ? "hidden" : "visible");
+                    return d.placed ? "visible" : "hidden";
                 }
             });
+
+        texts.transition().duration(800)
+            .attr({
+                transform: function (d) {
+                    return 'translate(' + d.x + ', ' + d.y + ')rotate(' + d.rotate + ')';
+                }
+            })
+            .select("text")
+            .attr('font-size', function (d) {
+                return d.fontSize;
+            })
+            .attr({
+                visibility: function (d) {
+                    return d.placed ? "visible" : "hidden";
+                }
+            });
+
+        // texts.style("text-decoration", "underline");
 
         mainGroup.selectAll(".connection").on("mouseover", function () {
             var thisLink = d3.select(this);
             thisLink.style('cursor', 'crosshair');
             // in order to select by byid, the id must not have space
-            // var sourceText = mainGroup.select("#" + thisLink.data()[0].sourceID);
-            // var prevSourceColor = sourceText.attr("fill");
-            // var targetText = mainGroup.select("#" + thisLink.data()[0].targetID);
-            // var prevTargetColor = targetText.attr("fill");
-            //
-            // thisLink.attr("stroke-width", 4);
-            //
-            // sourceText.attr({
-            //     stroke: prevSourceColor,
-            //     fill: prevSourceColor,
-            //     'stroke-width': 1.5
-            // });
-            //
-            // targetText.attr({
-            //     stroke: prevTargetColor,
-            //     fill: prevTargetColor,
-            //     'stroke-width': 1.5
-            // });
+            var sourceText = mainGroup.select("#" + thisLink[0][0].__data__.sourceID);
+            var prevSourceColor = sourceText.attr("fill");
+            var targetText = mainGroup.select("#" + thisLink[0][0].__data__.targetID);
+            var prevTargetColor = targetText.attr("fill");
+
+            thisLink.attr("stroke-width", 4);
+
+            sourceText.attr({
+                stroke: prevSourceColor,
+                fill: prevSourceColor,
+                'stroke-width': 1.5
+            });
+
+            targetText.attr({
+                stroke: prevTargetColor,
+                fill: prevTargetColor,
+                'stroke-width': 1.5
+            });
         });
 
-        // mainGroup.selectAll(".connection").on("mouseout", function () {
-        //     var thisLink = d3.select(this);
-        //     thisLink.style('cursor', 'crosshair');
-        //
-        //     var sourceText = mainGroup.select("#" + thisLink.data()[0].sourceID);
-        //     var targetText = mainGroup.select("#" + thisLink.data()[0].targetID);
-        //
-        //     thisLink.attr("stroke-width", d => opacScale(d.weight));
-        //
-        //     sourceText.attr({
-        //         stroke: 'none',
-        //         'stroke-width': 0
-        //     });
-        //
-        //     targetText.attr({
-        //         stroke: 'none',
-        //         'stroke-width':0
-        //     });
-        // });
+        mainGroup.selectAll(".connection").on("mouseout", function () {
+            var thisLink = d3.select(this);
+            thisLink.style('cursor', 'crosshair');
+            var sourceText = mainGroup.select("#" + thisLink[0][0].__data__.sourceID);
+            var targetText = mainGroup.select("#" + thisLink[0][0].__data__.targetID);
 
-        //Try
-        var prevColor;
+            thisLink.attr("stroke-width", lineScale(thisLink[0][0].__data__.weight));
+
+            sourceText.attr({
+                stroke: 'none',
+                'stroke-width': 0
+            });
+
+            targetText.attr({
+                stroke: 'none',
+                'stroke-width': 0
+            });
+        });
+
         //Highlight
         mainGroup.selectAll('.textData').on('mouseenter', function () {
             var thisText = d3.select(this);
@@ -488,7 +553,7 @@ function draw(data) {
         });
 
         //Build the legends
-        legendGroup = svg.append('g').attr('transform', 'translate(' + margins.left + ',' + (height + margins.top) + ')');
+        legendGroup.attr('transform', 'translate(' + margins.left + ',' + (height + margins.top + legendOffset) + ')');
         var legendNodes = legendGroup.selectAll('g').data(boxes.topics).enter().append('g')
             .attr('transform', function (d, i) {
                 return 'translate(' + 10 + ',' + (i * legendFontSize) + ')';
