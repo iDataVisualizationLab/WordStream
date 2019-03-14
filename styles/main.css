@@ -6,7 +6,22 @@ body {
     top: 200px;
     text-align: center;
 }
-
+a.titleText{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:visited{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:hover{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:active{
+    text-decoration: none;
+    color: black;
+}
 a.button{
     float: right;
     padding: 10px;
