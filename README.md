@@ -44,7 +44,7 @@ underlying relationships of terms. Here, we consider the relationship base on co
   - *Width*, *height*, *font size* and *number of chosen words (top rank)*. 
   - *Flow* 
  and *Angle Variance* are preferences for text orientation.
- - Relationships: Toggle allows relationship is be displayed.
+ - Relationships: Toggle allows relationship to be displayed.
  
  The metrics includes measurements for the importance of the word displayed. In the process of placing word, some of 
  them are left out due to lack of space. For example, TF-IDF ratio means the rate between the words shown to all the 
