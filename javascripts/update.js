@@ -13,7 +13,7 @@ function submitInput(draw) {
     globalMinFont = parseInt(document.getElementById("fontMin").innerText);
     globalMaxFont = parseInt(document.getElementById("fontMax").innerText);
     globalTop = parseInt(document.getElementById("topRankText").innerText);
-    document.getElementById("rel").checked = false;
+    // document.getElementById("rel").checked = false;
     var isFlow = document.getElementById("flow").checked;
     var isAv = document.getElementById("av").checked;
     if (isFlow && isAv) {

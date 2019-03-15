@@ -295,6 +295,7 @@ function draw(data) {
                         weight: d.weight,
                         sourceID: d.sourceID,
                         targetID: d.targetID,
+                        id: d.sourceID + "_" + d.targetID
                     });
                 }
             });
@@ -307,14 +308,15 @@ function draw(data) {
                 .domain(d3.extent(visibleLinks, d => d.weight))
                 .range([0.5, 1]);
 
-            var connection = mainGroup.selectAll(".connection").data(visibleLinks);
+            var connection = mainGroup.selectAll(".connection").data(visibleLinks, d => d.id);
             connection.exit().remove();
 
             connection.enter()
                 .append("line")
                 .attr("class", "connection");
 
-            connection
+            connection.transition()
+                .duration(800)
                 .attr("opacity", isRel ? 1 : 0)
                 .attr({
                     "x1": d => d.sourceX,
@@ -330,7 +332,6 @@ function draw(data) {
     } else drawWords();
 
     function drawWords() {
-        var placed = true;
         var prevColor;
 
         var texts = mainGroup.selectAll('.word').data(allWords, d => d.id);
@@ -344,11 +345,9 @@ function draw(data) {
                 }
             })
             .attr("class", "word")
+            .append('text')
 
-        textEnter.transition()
-            .duration(800)
-
-        textEnter.append('text')
+        textEnter
             .text(function (d) {
                 return d.text;
             })
