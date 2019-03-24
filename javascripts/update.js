@@ -17,21 +17,17 @@ function submitInput(draw) {
     var isFlow = document.getElementById("flow").checked;
     var isAv = document.getElementById("av").checked;
     if (isFlow && isAv) {
-        console.log("Flow and Av");
         globalFlag = "fa";
     }
     else if (isFlow && !isAv) {
-        console.log("Just Flow");
         globalFlag = "f";
     }
 
     else if (!isFlow && isAv) {
-        console.log("Just AV");
         globalFlag = "a";
     }
 
     else if (!isFlow && !isAv) {
-        console.log("None");
         globalFlag = "n";
     }
 
