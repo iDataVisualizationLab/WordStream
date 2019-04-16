@@ -586,7 +586,7 @@ function styleAxis(axisNodes) {
     });
     axisNodes.selectAll('.tick text').attr({
         'font-family': 'serif',
-        'font-size': 10
+        'font-size': 15
     });
 }
 
