@@ -4,27 +4,116 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WordStream</title>
+    <link rel="shortcut icon" href="images/ws.png">
     <script src="./lib/d3.min.js"></script>
+    <script src="./lib/d3.v4.min.js"></script>
     <script src="./lib/loaddata.js"></script>
     <script src="./lib/d3.layout.wordstream.js"></script>
+    <script src="lib/d3.slider.js"></script>
+
     <script src="./test/testutil.js"></script>
     <script src="javascripts/jquery/jquery-1.9.0.min.js"></script>
     <script src="javascripts/msdropdown/jquery.dd.js"></script>
     <script src="javascripts/msdropdown/select.js"></script>
-    <link rel="stylesheet" type="text/css" href="styles/msdropdown/dd.css" />
+    <link rel="stylesheet" type="text/css" href="styles/msdropdown/dd.css"/>
     <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
-    <style>.axis{font: 18px sans-serif;}</style>
+
+    <script src="javascripts/msdropdown/jquery.dd.js"></script>
+    <script src="javascripts/msdropdown/select.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/msdropdown/dd.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/d3.slider.css">
+
+    <link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
 </head>
 <body>
+<div class="title ">
+    <a href="index.html" class="titleText">WordStream: Interactive Tool for Topic Evolution</a>
+    <!--<span>-->
+    <a href="video.html" class="button still">Video</a>
+    <a href="index.html" class="button active">Demo</a>
+    <!--</span>-->
+</div>
 <div id="loadingSpinner">
     <!-- <span id="progressText"> -->
 </div>
-<div id="holder1"  class="holder1">
-    <select id="datasetsSelect" class="styled-select" onchange="loadNewData.call(this, event)"></select>
-</div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script> <!-- Spinner when loading -->
+
+<script type='text/javascript' src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script> <!-- Spinner when loading -->
+<script type='text/javascript' src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+<!--✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ Slider ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿-->
+<svg width="360px" height="377px" class="cp" id="cp">
+    <text y="15px" font-weight="600">Control Panel</text>
+</svg>
+<div id="menu" class="holderCP" style="display: inline-block">
+    <div id="holder1" class="holder1">
+        <select id="datasetsSelect" class="styled-select" onchange="loadNewData.call(this, event)"></select>
+    </div>
+
+    <p><span id="heightText" class="heightText textSlider"></span>
+        <img class="heightIcon icon" src="images/height.png" >
+    </p>
+    <div id="heightSlider" class="haxis slider"></div>
+
+    <p><img class="widthIcon icon" src="images/width.png">
+        <span id="widthText" class="widthText textSlider"></span>
+    </p>
+    <div id="widthSlider" class="waxis slider"></div>
+
+    <p><img class="fontIcon icon" src="images/font.png">
+        <span class="fontText textSlider">
+        <span id="fontMin"></span>,
+        <span id="fontMax"></span>
+    </span>
+    </p>
+    <div id="fontSlider" class="fontAxis slider"></div>
+
+    <p><img class="topRankIcon icon" src="images/toprank3.png">
+        <span id="topRankText" class="topRankText textSlider"></span>
+    </p>
+    <div id="topRankSlider" class="topRankAxis slider"></div>
+
+    <p class="textSlider flow">Flow</p>
+    <img class="flow" style="left: 68px; width: 33px; height: 23px" src="images/flow.png">
+    <label class="switch flow" style="left: 105px;">
+        <input type="checkbox" id="flow"
+               onclick="submitInput(draw)">
+
+        <span class="toggle round"></span>
+    </label>
+
+    <p class="textSlider angleVariance">Angle Variance</p>
+    <img class="angleVariance" style="top: 302px;left: 278px;width: 32px; height: 35px" src="images/av.png">
+    <label class="switch angleVariance" style="left: 315px">
+        <input type="checkbox" id="av"
+               onclick="submitInput(draw)">
+        <span class="toggle round"></span>
+    </label>
+
+    <p class="textSlider rel">Relationships</p>
+    <label class="switch rel" style="left: 315px;">
+        <input type="checkbox" id="rel" onclick="showRelationship()">
+        <span class="toggle round"></span>
+    </label>
+    <input class="submit" onclick="submitInput(draw)" type="button" value="Submit"><br>
+    <input class="computeMetric" onclick="computeMetric()" type="button" value="Compute measurements"><br>
+</div>
+<script src="./javascripts/init.js"></script>
+<script>
+    d3.select("#heightText").text(initHeight);
+    d3.select("#widthText").text(initWidth);
+    d3.select("#fontMin").text(initMinFont);
+    d3.select("#fontMax").text(initMaxFont);
+    d3.select("#topRankText").text(initTop);
+</script>
+
 <script src="./javascripts/main.js"></script>
-<script type='text/javascript' src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"> </script>
-<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css" />
+<script src="./javascripts/update.js"></script>
+<script src="./javascripts/metric.js"></script>
 </body>
 </html>

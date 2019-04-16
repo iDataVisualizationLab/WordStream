@@ -1,0 +1,321 @@
+
+.d3-slider {
+    position: relative;
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 1em;
+    border: 1px solid #888888;
+    z-index: 2;
+}
+
+.d3-slider-horizontal {
+    width: 240px;
+    height: 0.3em;
+    border-radius: 20px;
+    background-color: rgba(157, 157, 157, 0.33);
+    border-color: rgba(111, 111, 111, 0.72);
+}
+
+.d3-slider-width {
+    width: 500px;
+}
+.d3-slider-height {
+    width: 200px;
+}
+.d3-slider-normal {
+    width: 300px;
+}
+.d3-slider-range {
+    background: #727272;
+    left:0px;
+    right:0px;
+    height: 0.3em;
+    position: absolute;
+    border-radius: 20px;
+    border-color: transparent;
+
+}
+
+.d3-slider-range-vertical {
+    background:#2980b9;
+    left:0px;
+    right:0px;
+    position: absolute;
+    top:0;
+    rotation: revert;
+}
+
+.d3-slider-vertical {
+    width: .1em;
+    height: 100px;
+}
+
+.d3-slider-handle {
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    border: 1px solid #d3d3d3;
+    border-radius: 14px;
+    background: #eee;
+    background: linear-gradient(to bottom, #eee 0%, #ddd 100%);
+    z-index: 3;
+}
+.d3-slider-handle-hidden {
+    visibility: hidden;
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    border: 1px solid #d3d3d3;
+    border-radius: 14px;
+    background: #eee;
+    background: linear-gradient(to bottom, #eee 0%, #ddd 100%);
+    z-index: 3;
+}
+.d3-slider-handle:hover {
+    border: 1px solid #999999;
+}
+
+.d3-slider-horizontal .d3-slider-handle {
+    top: -.3em;
+    margin-left: -0.5em;
+}
+
+.d3-slider-axis {
+    position: relative;
+    z-index: 1;
+}
+
+.d3-slider-axis-bottom {
+    top: .35em;
+}
+
+.d3-slider-axis-right {
+    left: .8em;
+}
+
+.d3-slider-axis path {
+    stroke-width: 0;
+    fill: none;
+}
+
+.d3-slider-axis line {
+    fill: none;
+    stroke: #aaa;
+    shape-rendering: crispEdges;
+}
+
+.d3-slider-axis text {
+    font-size: 10px;
+    fill: #7b7b7b;
+    ;
+}
+
+.d3-slider-vertical .d3-slider-handle {
+    left: -.35em;
+    margin-left: 0;
+    margin-bottom: -.6em;
+}
+
+.chart rect {
+    fill: steelblue;
+}
+
+.chart text {
+    fill: white;
+    font: 12px sans-serif;
+    text-anchor: end;
+}
+
+.wrapper {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper > div {
+    margin: 10px 0;
+}
+
+#slider8 {
+    height: 150px;
+}
+
+#slider9 {
+    height: 250px;
+}
+.icon{
+    left: 20px
+}
+.slider {
+    left: 68px;
+    z-index: 1;
+}
+.textSlider {
+    left: 320px;
+    font-size: 15px;
+}
+.heightText {
+    position: absolute;
+    top: 103px;
+}
+.heightIcon {
+    position: absolute;
+    top: 95px;
+    width: 35px;
+    height: 35px
+}
+.haxis {
+    position: absolute;
+    top: 110px;
+}
+
+.widthText {
+    position: absolute;
+    top: 153px
+}
+.widthIcon {
+    position: absolute;
+    top: 144px;
+    width: 35px;
+    height: 35px
+
+}
+.waxis {
+    position: absolute;
+    top: 160px;
+}
+
+.fontIcon {
+    position: absolute;
+    top: 197px;
+    width: 35px;
+    height: 35px
+}
+.fontText {
+    white-space: nowrap;
+    position: absolute;
+    top: 203px;
+}
+.fontAxis {
+    position: absolute;
+    top: 210px;
+
+}
+
+.topRankIcon {
+    position: absolute;
+    top: 245px;
+    width: 35px;
+    height: 35px
+}
+.topRankText {
+    white-space: nowrap;
+    position: absolute;
+    top: 253px;
+
+}
+.topRankAxis {
+    position: absolute;
+    top: 260px;
+
+}
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.toggle:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .toggle {
+    background-color: #2196F3;
+}
+
+input:focus + .toggle {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .toggle:before {
+    -webkit-transform: translateX(14px);
+    -ms-transform: translateX(14px);
+    transform: translateX(14px);
+}
+
+/* Rounded toggles */
+.toggle.round {
+    border-radius: 45px;
+}
+
+.toggle.round:before {
+    border-radius: 50%;
+}
+
+.flow {
+    position: absolute;
+    top: 310px;
+    left: 30px;
+    margin: 0;
+}
+
+.angleVariance{
+    position: absolute;
+    white-space: nowrap;
+    top: 310px;
+    left: 170px;
+    margin: 0;
+}
+.frontier {
+    stroke-width: 1;
+    stroke: transparent;
+    position: absolute;
+    left: 180px;
+    top: 400px;
+}
+.rel {
+    position: absolute;
+    white-space: nowrap;
+    top: 355px;
+    left: 170px;
+    margin: 0;
+}
+.submit {
+    position: absolute;
+    top: 355px;
+    left: 30px;
+}
+.computeMetric {
+    z-index: 100;
+    position: absolute;
+    top: 424px;
+    left: 200px;
+}

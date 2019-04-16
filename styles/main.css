@@ -1,23 +1,309 @@
-#holder1 {
-    position:absolute;
+body {
+    background-color: #eeeeee;
+    font-family:  Arial, sans-serif;
+}
+.video {
+    top: 200px;
+    text-align: center;
+}
+a.titleText{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:visited{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:hover{
+    text-decoration: none;
+    color: black;
+}
+a.titleText:active{
+    text-decoration: none;
+    color: black;
+}
+a.button{
+    float: right;
+    padding: 10px;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+a.button.active{
+    background-color: teal;
+}
+a.button.still {
+    background-color: #bfbfbf;
+}
+a.button:hover{
+    background-color: #9e9e9e;!important;
+}
+#progressBar {
+    margin: 20px;
+    width: 300px;
+    height: 8px;
+    position: relative;
+}
+.navi ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+}
+
+
+.title .nav li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.title .nav a:hover {
+    background-color: #a9a9a9;
+}
+
+.navi li a:visited {
+    background-color: #fbde7c;
+}
+
+.title {
+    font-family: Helvetica;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 45px 20px 18px 35px;
+    position: fixed;
+    background-color: white;
+    top: -10px;
+    width: -webkit-fill-available;
+    margin: -10px 0 0 -10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+}
+.title .nav {
+    float: right;
+    font-size: 20px;
+}
+.title .nav a:hover {
+    background-color: #fbde7c;
+}
+
+#menu{
+    background-color: transparent;
+}
+.cp {
+    position: absolute;
+    top: 100px;
+    background-color: white;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+}
+
+.metricSVG {
+    position: absolute;
+    top: 509px;
+    background-color: white;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+    z-index: 0;
+}
+.metricSVG2 {
+    position: absolute;
+    top: 530px;
+    left: 290px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 10px;
+    z-index: 1;
+}
+.metTable {
+    border-radius: 10px;
+    border: 2px solid #666666;
+    position: absolute;
+    text-align: center;
+    width: 310px;
+    height: auto;
+    font: 13px sans-serif;
+    pointer-events: none;
+    left: 43px;
+    top: 560px;
+    z-index: 1;
+}
+.metTable table{
+    border-radius: 10px;
+    /*border-collapse: collapse;*/
+    table-layout:fixed;
+    width: 100%;
+    overflow: hidden;
+    z-index: 1;
+
+}
+.metTable td{
+    border-collapse: collapse;
+    text-align: left;
+    padding: 8px;
+    font-size: 13px;
+    z-index: 1;
+}
+.metTable tr:nth-child(odd){
+    /*border-collapse: collapse;*/
+    background-color: #f6f6f6;
+    font-size: 13px;
+    z-index: 1;
+
+}
+
+.metTable tr:nth-child(even){
+    /*border-collapse: collapse;*/
+    background-color: #e1e1e1;
+    font-size: 13px;
+    z-index: 1;
+
+}
+
+
+.metricDisplay{
+    font-size: 14px;
+}
+.dropdownList {
+    position: absolute;
     border-radius: 0px;
     z-index: 1110;
-    /*top: 94px;*/
-    left: 3px;
-    width: 200px;
+    top: 144px;
+    left: 80px;
+    width: 240px;
     height: 50px;
     border: 0px solid rgba(0,0,0, 1);
     font: normal 18px Impact, Charcoal, sans-serif !important;
-} 
+}
+.holderCP {
+    position:absolute;
+    border-radius: 0px;
+    /*left: 230px;*/
+    /*height: 50px;*/
+    border: 0px solid rgba(0,0,0, 1);
+    top: 100px;
+    background-color: white;
+    padding: 10px;
+}
+.holder1 {
+    top: 30px;
+    position: relative;
+    left: 60px;
+}
+#mainsvg{
+    background-color: white;
+    position:absolute;
+    top:100px;
+    left: 400px;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #9f9f9f;
+    overflow-x: auto;
+}
+#timearc{
+    display: block;
+    margin-right: 50px;
+    background-color: white;
+    position:relative;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #9f9f9f;
+    overflow-x: auto;
+    margin-bottom: 50px;
+}
+#network{
+    margin-bottom: 50px;
+    background-color: white;
+    position:relative;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #9f9f9f;
+    overflow-x: auto;
+}
 .styled-select {
     overflow: hidden;
     height: 28px;
-    width: 200px;
+    width: 240px;
     margin-right: 10px;
     background: #eee;
 }
-#mainsvg{
-    position:absolute;
-    top:-10px;
-    left: 205px;
+.legendValue{
+    font: 18px sans-serif;
+    color: #0d97ba}
+
+.nodeText {
+    background: #91877b;
+    text-shadow: 0 11px 10 rgba(255, 255, 255, 1);
 }
+
+.node {
+    stroke: #fff;
+    stroke-width: 1px;
+    stroke-opacity: 0.6;
+}
+.link {
+    stroke: #555;
+    stroke-opacity: .9;
+}
+.linkArc {
+    fill: none;
+    stroke: #000;
+}
+
+.node text {
+    font: 9px helvetica;
+}
+
+.axis {
+    font: 5 sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.axis .domain {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .25;
+    stroke-width: 5px;
+    stroke-linecap: round;
+}
+
+.axis .halo {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 3px;
+    stroke-linecap: round;
+}
+
+.slider .handle {
+    fill: #666;
+    stroke: #000;
+    stroke-opacity: .25;
+    stroke-width: 1px;
+    cursor: crosshair;
+}
+
+
+.ws {
+    top: -30px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: Helvetica;
+}
+
+.ticky {
+    font-size: 10px;
+}
+
