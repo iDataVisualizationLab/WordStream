@@ -307,3 +307,15 @@ a.button:hover{
     font-size: 15px;
 }
 
+/*---------------- Example page-----------------*/
+a.notDecorate{
+    text-decoration: none;
+}
+
+a.linkSource{
+    color: #a56448;
+}
+footer.example{
+    color: #471e20;
+    background-color: #dac7b1!important;
+}

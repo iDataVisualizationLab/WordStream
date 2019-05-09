@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<title>WordStream Examples</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+    body, h1, h2, h3, h4, h5 {
+        font-family: "Tahoma", sans-serif;
+        color: #471e20 !important;
+    }
+
+    p {
+        font-family: "Tahoma", sans-serif;
+    }
+
+    hr {
+        border: 0;
+        border-top: 1px solid #b789752e;
+        margin: 20px 0;
+    }
+</style>
+<body class="w3-sand">
+<link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
+
+<!-- w3-content defines a container for fixed size centered content,
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1400px">
+
+    <!-- Header -->
+    <header class="w3-container w3-center w3-padding-32">
+        <a href="index.html"
+           style="text-decoration: none"
+           target="_blank">
+            <h1><b>WordStream</b></h1></a>
+        <p>An interactive visual tool from <span class="w3-tag">
+            <a href="http://myweb.ttu.edu/tnhondan/iDVL/index.php" target="_blank"
+               style="text-decoration: none;">iDVLab</a></span></p>
+    </header>
+
+    <!-- Grid -->
+    <div class="w3-row">
+
+        <!-- Blog entries -->
+        <div class="w3-col">
+            <!-- Empty Wheel -->
+            <div class="w3-card-4 w3-margin w3-white">
+                <img src="media/emptywheel.png"
+                     alt="Empty Wheel Blog" style="width:100%" onclick="onClick(this)">
+                <div class="w3-container">
+                    <h3><b>Empty Wheel Blog</b></h3>
+                    <h5><a href="https://www.emptywheel.net/"
+                           class="linkSource w3-opacity">https://www.emptywheel.net/</a></h5>
+                </div>
+
+                <div class="w3-container">
+                    <p>Time span: January 2013 - December 2013</p>
+                </div>
+            </div>
+            <hr>
+            <!--------------------------------->
+            <div class="w3-card-4 w3-margin w3-white">
+                <img src="media/quantum.png"
+                     alt="Quantum Computing Publications"
+                     style="width:100%" onclick=onClick(this)>
+                <div class="w3-container">
+                    <h3><b>Quantum Computing Publications</b></h3>
+                    <h5><a
+                            href="https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=quantum%20computing"
+                            class="linkSource w3-opacity">Quantum computing publications on IEEE</a></h5>
+                </div>
+                <div class="w3-container">
+                    <p>Time span: 1998 - 2018</p>
+                </div>
+            </div>
+            <hr>
+            <!--------------------------------->
+            <div class="w3-card-4 w3-margin w3-white">
+                <img src="media/huff.png"
+                     alt="Huffington Post" style="width:100%"
+                     onclick="onClick(this)">
+                <div class="w3-container">
+                    <h3><b>Huffington Post</b></h3>
+                    <h5><a
+                            href="https://www.huffpost.com/" class="linkSource w3-opacity">https://www.huffpost.com/</a>
+                    </h5>
+                </div>
+
+                <div class="w3-container">
+                    <p>Time span: January 2012 - December 2012</p>
+                </div>
+            </div>
+
+            <!-- Blog entry | Example -->
+            <!--<div class="w3-card-4 w3-margin w3-white">-->
+            <!--<img src="/w3images/bridge.jpg" alt="Norway" style="width:100%">-->
+            <!--<div class="w3-container">-->
+            <!--<h3><b>BLOG ENTRY</b></h3>-->
+            <!--<h5>Title description, <span class="w3-opacity">April 2, 2014</span></h5>-->
+            <!--</div>-->
+
+            <!--<div class="w3-container">-->
+            <!--<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed-->
+            <!--tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>-->
+            <!--<div class="w3-row">-->
+            <!--<div class="w3-col m8 s12">-->
+            <!--<p><button class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</b></button></p>-->
+            <!--</div>-->
+            <!--<div class="w3-col m4 w3-hide-small">-->
+            <!--<p><span class="w3-padding-large w3-right"><b>Comments  </b> <span class="w3-badge">2</span></span></p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!-- END BLOG ENTRIES -->
+        </div>
+
+        <!-- Introduction menu -->
+
+
+        <!-- END GRID -->
+    </div>
+    <br>
+
+    <!-- END w3-content -->
+</div>
+<!-- Modal for full size images on click-->
+<div id="modal01" class="w3-modal w3-black" style="padding-top:0" onclick="this.style.display='none'">
+    <span class="w3-button w3-black w3-xlarge w3-display-topright">×</span>
+    <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+        <img id="img01" class="w3-image">
+        <p id="caption" style="color: white"></p>
+    </div>
+</div>
+<!-- Footer -->
+<footer class="w3-container example">
+    <p style="text-align: center">Last updated: May 8, 2019</p>
+</footer>
+<script>
+    function onClick(element) {
+        document.getElementById("img01").src = element.src;
+        document.getElementById("modal01").style.display = "block";
+        document.getElementById("modal01").style.width = "100%"
+        var captionText = document.getElementById("caption");
+        captionText.innerHTML = element.alt;
+    }
+
+</script>
+</body>
+</html>
