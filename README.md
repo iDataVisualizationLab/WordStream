@@ -4,6 +4,8 @@ Demo: https://iDataVisualizationLab.github.io/WordStream/
 
 Video: https://iDataVisualizationLab.github.io/WordStream/video.html
 
+Examples: https://idatavisualizationlab.github.io/WordStream/examples.html
+
 [![WS](https://github.com/nnhuyen/WordStream/blob/master/images/Huffington.png)](https://www.youtube.com/watch?v=DwaDMPhi2Ec "Everything Is AWESOME")
 
 *WordStream* is a visualization technique for demonstrating the evolution of a topic over time. This is a hybrid 
