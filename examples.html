@@ -8,18 +8,50 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <style>
     body, h1, h2, h3, h4, h5 {
-        font-family: "Verdana", sans-serif;
+        font-family: "Raleway", sans-serif;
         color: #471e20 !important;
     }
 
-    p {
-        font-family: "Tahoma", sans-serif;
+    h1 {
+        font-size: 50px;
+    }
+    p,a {
+        font-family: "Raleway", sans-serif;
     }
 
     hr {
         border: 0;
         border-top: 1px solid #b789752e;
         margin: 20px 0;
+    }
+
+    .titleBorder {
+        border: 1px solid #4a101447;
+        background-color: #ffedd0;
+    }
+    .mainMenu {
+        padding-top: 40px;
+        padding-bottom: 20px;
+        height: 100%;
+        min-height: 100px;
+        display: flex;
+        justify-content:center;
+        align-items:center;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+    }
+    .mainMenu > div {
+        display: inline-flex;
+        justify-content:center;
+        align-items:center;
+    }
+    .mainMenu:before,
+    .mainMenu:after {
+        content: "";
+        height: 1px;
+        background: #4a101447;
+        flex:1;
     }
 </style>
 <body class="w3-sand">
@@ -38,21 +70,17 @@ and is wrapped around the whole page content, except for the footer in this exam
         <p>An interactive visual tool from <span class="w3-tag">
             <a href="http://myweb.ttu.edu/tnhondan/iDVL/index.php" target="_blank"
                style="text-decoration: none;">iDVLab</a></span></p>
-        <hr width="50%" style="margin: 0 25% 0 25%;">
-        <div class="w3-bar w3-light-grey w3-round w3-hide-small">
-            <a href="#" class="w3-bar-item w3-button">Home</a>
-            <a href="#portfolio" class="w3-bar-item w3-button">Portfolio</a>
-            <a href="#contact" class="w3-bar-item w3-button">Contact</a>
+
+<!--        <hr class="titleHr">-->
+        <div class="mainMenu">
+            <div class="w3-bar w3-round titleBorder" >
+                <a href="index.html" target="_blank" class="w3-bar-item w3-button">Demo</a>
+                <a href="#" class="w3-bar-item w3-button" style="background-color: #f7deb7">Examples</a>
+                <a href="video.html" target="_blank" class="w3-bar-item w3-button">Video</a>
+            </div>
         </div>
     </header>
 
-    <div class="w3-center w3-light-grey w3-padding-4 w3-hide-large w3-hide-medium">
-        <div class="w3-bar w3-light-grey">
-            <a href="#" class="w3-bar-item w3-button">Home</a>
-            <a href="#portfolio" class="w3-bar-item w3-button">Portfolio</a>
-            <a href="#contact" class="w3-bar-item w3-button">Contact</a>
-        </div>
-    </div>
     <!-- Grid -->
     <div class="w3-row">
 
@@ -130,14 +158,8 @@ and is wrapped around the whole page content, except for the footer in this exam
             <!-- END BLOG ENTRIES -->
         </div>
 
-        <!-- Introduction menu -->
-
-
-        <!-- END GRID -->
     </div>
     <br>
-
-    <!-- END w3-content -->
 </div>
 <!-- Modal for full size images on click-->
 <div id="modal01" class="w3-modal w3-black" style="padding-top:0" onclick="this.style.display='none'">
@@ -149,7 +171,7 @@ and is wrapped around the whole page content, except for the footer in this exam
 </div>
 <!-- Footer -->
 <footer class="w3-container example">
-    <p style="text-align: center">Last updated: May 8, 2019</p>
+    <p style="text-align: center">Last updated: May 9, 2019</p>
 </footer>
 <script>
     function onClick(element) {
