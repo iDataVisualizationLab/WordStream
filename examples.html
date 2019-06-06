@@ -5,18 +5,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <style>
     body, h1, h2, h3, h4, h5 {
-        font-family: "Raleway", sans-serif;
         color: #471e20 !important;
     }
 
     h1 {
         font-size: 50px;
-    }
-    p,a {
-        font-family: "Raleway", sans-serif;
     }
 
     hr {
@@ -54,32 +49,22 @@
         flex:1;
     }
 </style>
-<body class="w3-sand">
+<body class="w3-white">
 <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
 
 <!-- w3-content defines a container for fixed size centered content,
 and is wrapped around the whole page content, except for the footer in this example -->
-<div class="w3-content" style="max-width:1400px">
+<div class="title ">
+    <a href="index.html" class="titleText">WordStream: Interactive Tool for Topic Evolution</a>
+    <!--<span>-->
+    <a href="examples.html" class="button active">Examples</a>
+    <a href="video.html" class="button still">Video</a>
+    <a href="index.html" class="button still">Demo</a>
 
-    <!-- Header -->
-    <header class="w3-container w3-center w3-padding-64">
-        <a href="index.html"
-           style="text-decoration: none"
-           target="_blank">
-            <h1><b>WordStream</b></h1></a>
-        <p>An interactive visual tool from <span class="w3-tag">
-            <a href="http://myweb.ttu.edu/tnhondan/iDVL/index.php" target="_blank"
-               style="text-decoration: none;">iDVLab</a></span></p>
+    <!--</span>-->
+</div>
 
-<!--        <hr class="titleHr">-->
-        <div class="mainMenu">
-            <div class="w3-bar w3-round titleBorder" >
-                <a href="index.html" target="_blank" class="w3-bar-item w3-button">Demo</a>
-                <a href="#" class="w3-bar-item w3-button" style="background-color: #f7deb7">Examples</a>
-                <a href="video.html" target="_blank" class="w3-bar-item w3-button">Video</a>
-            </div>
-        </div>
-    </header>
+<div class="w3-content" style="max-width:1400px;padding-top: 150px">
 
     <!-- Grid -->
     <div class="w3-row">
@@ -386,8 +371,8 @@ and is wrapped around the whole page content, except for the footer in this exam
     </div>
 </div>
 <!-- Footer -->
-<footer class="w3-container example">
-    <p style="text-align: center">Last updated: May 10, 2019</p>
+<footer class="w3-container">
+    <p style="text-align: center">Last updated: June 6, 2019</p>
 </footer>
 <script>
     function onClick(element) {
