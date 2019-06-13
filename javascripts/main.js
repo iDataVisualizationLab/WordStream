@@ -209,7 +209,16 @@ function draw(data) {
         + lineCardinal(boundary.slice(lenb / 2, lenb))
             .substring(1, lineCardinal(boundary.slice(lenb / 2, lenb)).length)
         + "Z";
+    // ============= Get LAYER PATH ==============
 
+    layerPath = mainGroup.append("path")
+        .attr("d", combined)
+        .attr("visibility", "hidden")
+        .attr("class", "layerpath")
+        .attr({
+            'fill-opacity': 1,
+            'stroke-opacity': 0,
+        });
     // draw curves
     var topics = boxes.topics;
 
@@ -246,15 +255,6 @@ function draw(data) {
             }
         });
 
-
-    // ============= Get LAYER PATH ==============
-
-    layerPath = mainGroup.selectAll("path").append("path")
-        .attr("d", combined)
-        .attr({
-            'fill-opacity': 0,
-            'stroke-opacity': 0,
-        });
 
     var allWords = [];
     d3.map(boxes.data, function (row) {

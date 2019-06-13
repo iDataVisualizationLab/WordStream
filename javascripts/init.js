@@ -64,9 +64,13 @@ var metric = d3.select("body").append("svg")
     .attr("width",360)
     .attr("height", 250)
     .attr("class","metricSVG")
-    .attr("id","metricSVG");
+    .attr("id","metricSVG")
+    .append("g");
 
-metric.append("text").attr("y", 15).attr("font-weight",600).text("Metrics");
+metric.append("text")
+    .attr("transform", "translate(0,15)")
+    .attr("font-weight",600).text("Metrics");
+
 
 d3.select("body")
 // .append("div")

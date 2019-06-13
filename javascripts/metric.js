@@ -1,9 +1,12 @@
 function computeMetric() {
+    let compact = getCompactness(allW, layerPath),
+        display = getDisplayRate(allW, maxFreq);
+
     var metValue = [getTfidf().toFixed(2),
-        getCompactness(allW, layerPath)[0].toFixed(2),
-        getCompactness(allW, layerPath)[1].toFixed(2),
-        getDisplayRate(allW, maxFreq)[0].toFixed(2),
-        getDisplayRate(allW, maxFreq)[1].toFixed(2)];
+        compact[0].toFixed(2),
+        compact[1].toFixed(2),
+        display[0].toFixed(2),
+        display[1].toFixed(2)];
 
     metric2.selectAll(".metricValue").remove();
     metric2.selectAll(".metricValue")

@@ -317,5 +317,5 @@ input:checked + .toggle:before {
     z-index: 100;
     position: absolute;
     top: 424px;
-    left: 200px;
+    left: 210px;
 }
