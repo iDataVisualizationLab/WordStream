@@ -6,7 +6,7 @@ Video: https://iDataVisualizationLab.github.io/WordStream/video.html
 
 Examples: https://idatavisualizationlab.github.io/WordStream/examples.html
 
-[![WS](https://github.com/nnhuyen/WordStream/blob/master/images/Huffington.png)](https://www.youtube.com/watch?v=DwaDMPhi2Ec "Everything Is AWESOME")
+[![WS](https://github.com/huyen-nguyen/WordStream/blob/master/images/Huffington.png)](https://www.youtube.com/watch?v=DwaDMPhi2Ec "Everything Is AWESOME")
 
 *WordStream* is a visualization technique for demonstrating the evolution of a topic over time. This is a hybrid 
 technique from Wordle and StreamGraph, which conveys textual data with both global and local perpsectives. Global trends
@@ -27,7 +27,7 @@ attention](https://www.cs.uic.edu/~tdang/TimeArcs/EuroVis2016/TimeArcs_Dang_Euro
 appearance. A word's sudden attention is a function of frequency, which is big when the previous timestep has small 
 frequency and this current timestep has high frequency. 
 
-![ScreenShot](https://github.com/nnhuyen/WordStream/blob/master/media/highlight.png)
+![ScreenShot](https://github.com/huyen-nguyen/WordStream/blob/master/media/highlight.png)
 
 WordStream shows the remarkable topics by emphasizing them with font size and opacity.  
 
