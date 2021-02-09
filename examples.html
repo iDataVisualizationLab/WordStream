@@ -4,7 +4,8 @@
 <link rel="shortcut icon" href="images/ws.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
+
 <style>
     body, h1, h2, h3, h4, h5 {
         line-height: initial;
@@ -50,13 +51,19 @@
         background: #4a101447;
         flex:1;
     }
+
+    .w3-content,.w3-auto{margin-left:auto;margin-right:auto}.w3-content{max-width:980px}.w3-auto{max-width:1140px}
+    .w3-row:after,.w3-row:before,.w3-row-padding:after,.w3-row-padding:before,
+    .w3-cell-row:before,.w3-cell-row:after,.w3-clear:after,.w3-clear:before,.w3-bar:before,.w3-bar:after{content:"";display:table;clear:both}
+    .w3-card-4,.w3-hover-shadow:hover{box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19)}
+    .w3-container,.w3-panel{padding:0.01em 16px}
 </style>
-<body class="w3-white">
-<link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
+<body>
 
 <!-- w3-content defines a container for fixed size centered content,
 and is wrapped around the whole page content, except for the footer in this example -->
-<div class="title ">
+<div class="title">
+
     <a href="index.html" class="titleText">WordStream: Interactive Tool for Topic Evolution</a>
     <!--<span>-->
     <a href="https://diglib.eg.org/handle/10.2312/evs20191178" class="button still" target="_blank">EuroVis Entry</a>
@@ -69,7 +76,7 @@ and is wrapped around the whole page content, except for the footer in this exam
     <!--</span>-->
 </div>
 
-<div class="w3-content" style="max-width:1400px;padding-top: 150px">
+<div class="w3-content" style="max-width:1400px;padding-top: 50px">
 
     <!-- Grid -->
     <div class="w3-row">

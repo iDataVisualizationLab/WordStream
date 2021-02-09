@@ -1,4 +1,4 @@
-const initWidth = (window.innerWidth - 420) ? (window.innerWidth - 420) : 1260,
+const initWidth = (window.innerWidth - 430) ? (window.innerWidth - 430) : 1250,
     initHeight = 660,
     initMinFont = 15,
     initMaxFont = 35,

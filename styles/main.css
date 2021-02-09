@@ -80,12 +80,12 @@ a.button:hover{
     font-family: Helvetica;
     font-size: 28px;
     font-weight: bold;
-    padding: 45px 20px 18px 35px;
-    position: fixed;
+    padding: 1.9rem 2rem 2rem 2rem;
+    /*position: fixed;*/
     background-color: white;
     top: -10px;
-    width: -webkit-fill-available;
-    margin: -10px 0 0 -10px;
+    /*width: 100%;*/
+    margin-top: -10px;
     box-shadow: 5px 10px 18px #bcbcbc;
 }
 .title .nav {
@@ -318,4 +318,22 @@ a.linkSource{
 footer.example{
     color: #471e20;
     background-color: #dac7b1!important;
+}
+
+/* ------- update 2021 --------- */
+
+.title a{
+    display: inline-block;
+}
+
+@media (max-width: 1150px){
+    .title a{
+        display: block;
+    }
+}
+@media (max-width: 750px) {
+    a.button{
+        padding: 4px;
+        font-size: 10px;
+    }
 }
